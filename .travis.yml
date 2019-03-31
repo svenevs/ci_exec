@@ -1,0 +1,43 @@
+sudo: false
+dist: xenial
+
+# Only build master branch, other branches will have a Pull Request build.
+branches:
+  only:
+    - master
+
+matrix:
+  include:
+    - os: linux
+      language: python
+      python: 3.5
+      env: PY=3.5
+    - os: linux
+      language: python
+      python: 3.6
+      env: PY=3.6
+    - os: linux
+      language: python
+      python: 3.7
+      env: PY=3.7
+    - os: osx
+      language: generic
+      env: PY=3.x
+      before_install:
+        - |
+            if brew ls --versions python >/dev/null 2>&1; then
+                action="upgrade"
+            else
+                action="install"
+            fi
+            HOMEBREW_NO_AUTO_UPDATE=1 brew $action python
+            python3 -m venv venv
+            source venv/bin/activate
+
+install:
+  - pip install -U tox codecov
+script:
+  - tox -e py -- --cov-report xml:coverage.xml --cov
+after_success:
+  - py_xy="$(python -c 'import sys; print(".".join(str(n) for n in sys.version_info[0:2]))')"
+  - codecov --required -X gcov -f coverage.xml --name "[Travis] $TRAVIS_OS_NAME-$py_xy"
