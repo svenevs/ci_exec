@@ -1,0 +1,22 @@
+parameters:
+  parameters.py_version: ''  # X.Y
+  parameters.image_short: ''  # e.g., 'Linux' or 'macOS' or 'Win64'
+
+steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: ${{ parameters.py_version }}
+      architecture: 'x64'
+    displayName: Use Python ${{ parameters.py_version }}
+  - script: |
+      pip install -U tox codecov
+      tox -e py -- --cov-report xml:coverage.xml --cov
+    displayName: Run Tests for ${{ parameters.py_version }}
+  # This step doesn't seem to be necessary...but meh xD
+  - script: |
+      python -c "import shutil; shutil.rmtree('.tox', ignore_errors=True)"
+    displayName: Delete ${{ parameters.py_version }} .tox/ Directory
+  - script: |
+      codecov --required -X gcov -f coverage.xml --name "[AzP] ${{ parameters.image_short }}-${{ parameters.py_version }}" -t $(CODECOV_TOKEN)
+    displayName: Upload Code Coverage for ${{ parameters.py_version }}
+    condition: succeeded()
