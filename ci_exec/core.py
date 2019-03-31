@@ -13,12 +13,14 @@
 # See the License for the specific language governing permissions and                  #
 # limitations under the License.                                                       #
 ########################################################################################
+"""The core functionality of the ``ci_exec`` package."""
 
 import sys
 
-from .colorize import colorize, Colors, Styles
+from .colorize import Colors, Styles, colorize
 
-def fail(why: str, *, exit_code: int=1, no_prefix: bool=False):
+
+def fail(why: str, *, exit_code: int=1, no_prefix: bool=False):  # noqa: E252
     """
     Write a failure message to :data:`python:sys.stderr` and exit.
 
@@ -41,15 +43,18 @@ def fail(why: str, *, exit_code: int=1, no_prefix: bool=False):
     sys.stderr.write("{prefix}{why}\n".format(prefix=prefix, why=why))
     sys.exit(exit_code)
 
-class Executable:
+
+class Executable:  # noqa: D101
     pass
 
-def which():
+
+def which():  # noqa: D103
     pass
 
-def mkdir():
+
+def mkdir():  # noqa: D103
     pass
 
-def rmtree():
-    pass
 
+def rmtree():  # noqa: D103
+    pass

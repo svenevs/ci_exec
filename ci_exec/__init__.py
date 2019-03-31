@@ -14,14 +14,10 @@
 # limitations under the License.                                                       #
 ########################################################################################
 
-"""
-This is a package that does things.
-"""
+"""This is a package that does things."""
 
 from .colorize import log_build_stage
-from .core import Executable, fail, which, mkdir, rmtree
+from .core import Executable, fail, mkdir, rmtree, which
 
 __version__ = "0.1.0.dev"
-__all__ = [
-    "Executable", "fail", "which", "mkdir", "rmtree", "log_build_stage"
-]
+__all__ = ["Executable", "fail", "mkdir", "rmtree", "which", "log_build_stage"]

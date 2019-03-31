@@ -1,5 +1,14 @@
-ci_exec.colorize Module
-=======================
+ci_exec.colorize
+================
+
+Module
+------
 
 .. automodule:: ci_exec.colorize
+   :members:
+
+Tests
+-----
+
+.. automodule:: testing.colorize
    :members:

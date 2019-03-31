@@ -51,6 +51,13 @@ class Styles:
     Inverted = "7m"
     """The inverted ANSI format."""
 
+    @classmethod
+    def all_styles(cls) -> tuple:
+        """Return a tuple of all style strings available (used in testing)."""
+        return (
+            Styles.Regular, Styles.Bold, Styles.Dim, Styles.Underline, Styles.Inverted
+        )
+
 
 class Colors:
     """The core ANSI color codes."""
@@ -78,6 +85,14 @@ class Colors:
 
     White = "37"
     """The white ANSI color."""
+
+    @classmethod
+    def all_colors(cls) -> tuple:
+        """Return a tuple of all string colors available (used in testing)."""
+        return (
+            Colors.Black, Colors.Red, Colors.Green, Colors.Yellow, Colors.Blue,
+            Colors.Magenta, Colors.Cyan, Colors.White
+        )
 
 
 def colorize(message: str, *, color: str, style: str=Styles.Regular, force: bool=False) -> str:  # noqa: E252, E501

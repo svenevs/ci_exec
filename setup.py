@@ -1,3 +1,4 @@
+# noqa: D100
 ########################################################################################
 # Copyright 2019 Stephen McDowell                                                      #
 #                                                                                      #
@@ -13,12 +14,13 @@
 # See the License for the specific language governing permissions and                  #
 # limitations under the License.                                                       #
 ########################################################################################
-from setuptools import find_packages, setup
-import sys
 import os
+import sys
+
+from setuptools import find_packages, setup
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import ci_exec
+import ci_exec  # noqa: E402, I100
 
 setup(
     name="ci_exec",
