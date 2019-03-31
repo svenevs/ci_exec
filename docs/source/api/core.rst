@@ -1,0 +1,5 @@
+ci_exec.core Module
+=======================
+
+.. automodule:: ci_exec.core
+   :members:
