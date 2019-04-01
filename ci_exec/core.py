@@ -24,17 +24,17 @@ def fail(why: str, *, exit_code: int=1, no_prefix: bool=False):  # noqa: E252
     """
     Write a failure message to :data:`python:sys.stderr` and exit.
 
-    **Parameters**
-
-    ``why`` (:class:`python:str`)
+    Parameters
+    ----------
+    why : str
         The message explaining why the program is being failed out.
 
-    ``exit_code`` (:class:`python:int`)
+    exit_code : int
         The exit code to use.  Default: ``1``.
 
-    ``no_prefix`` (:class:`python:bool`)
-        Whether to prefix a bold red ``[X] `` before ``why``.  Default: ``False``, the
-        bold red ``[X] `` prefix is included unless set to ``True``.
+    no_prefix: bool
+        Whether to prefix a bold red ``"[X] "`` before ``why``.  Default: ``False``, the
+        bold red ``"[X] "`` prefix is included unless set to ``True``.
     """
     if no_prefix:
         prefix = ""
