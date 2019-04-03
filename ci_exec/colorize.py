@@ -15,7 +15,8 @@
 ########################################################################################
 """Various utilities for colorizing terminal output."""
 
-import platform
+import shutil
+from typing import Optional
 
 
 class Ansi:
@@ -53,7 +54,7 @@ class Styles:
 
     @classmethod
     def all_styles(cls) -> tuple:
-        """Return a tuple of all style strings available (used in testing)."""
+        """Return a tuple of all style strings available (used in tests)."""
         return (
             Styles.Regular, Styles.Bold, Styles.Dim, Styles.Underline, Styles.Inverted
         )
@@ -88,14 +89,14 @@ class Colors:
 
     @classmethod
     def all_colors(cls) -> tuple:
-        """Return a tuple of all string colors available (used in testing)."""
+        """Return a tuple of all string colors available (used in tests)."""
         return (
             Colors.Black, Colors.Red, Colors.Green, Colors.Yellow, Colors.Blue,
             Colors.Magenta, Colors.Cyan, Colors.White
         )
 
 
-def colorize(message: str, *, color: str, style: str=Styles.Regular, force: bool=False) -> str:  # noqa: E252, E501
+def colorize(message: str, *, color: str, style: str=Styles.Regular) -> str:  # noqa: E252, E501
     """
     Return ``message`` colorized with specified style.
 
@@ -117,23 +118,11 @@ def colorize(message: str, *, color: str, style: str=Styles.Regular, force: bool
     style : str
         The ANSI style to use.  Default: :data:`Styles.Regular`.
 
-    force : bool
-        If :func:`python:platform.system` returns ``"Windows"``, the original message is
-        not escaped with color codes.  This is to accomodate that some Windows CI
-        providers will remove any lines of text that have color escape sequences.
-
-        The default value is ``False``, set to ``True`` if color sequences are always
-        desired.
-
     Returns
     -------
     str
-        The original message with the specified color escape sequence, unless the
-        platform is ``"Windows"`` (see ``force`` parameter).
+        The original message with the specified color escape sequence.
     """
-    if platform.system() == "Windows" and not force:
-        return message
-
     return "{Escape}{color};{style}{message}{Clear}".format(
         Escape=Ansi.Escape,
         color=color,
@@ -143,22 +132,97 @@ def colorize(message: str, *, color: str, style: str=Styles.Regular, force: bool
     )
 
 
-def log_build_stage(stage: str, *, force_color: bool=False):  # noqa: E252
+def log_stage(stage: str, *, fill_char: str="=", color: Optional[str]=Colors.Green,  # noqa: E252, E501
+              style: str=Styles.Bold, width: Optional[int]=None, **kwargs):          # noqa: E252, E501
     """
-    Print ``stage`` with ``"==> "`` prefixed in ANSI bold green.
+    Print a terminal width block with ``stage`` message in the middle.
 
-    Simply calls :func:`python:print` with a :func:`colorize`'d prefix.  It's utility is
-    for making finding stages in the build log output easier to find (just search for
-    the bright green ``"==> "``).
+    Similar to the output of ``tox``, a bar of ``=== {stage} ===`` will be printed,
+    adjusted to the width of the terminal.  For example::
+
+        >>> log_stage("CMake.Configure")
+        ======================== CMake.Configure ========================
+
+    By default, this will be printed using ANSI bold green to make it stick out.  If the
+    terminal size cannot be obtained, a width of ``44`` is assumed.  Specify ``width``
+    if fixed width is desired.
+
+    .. note::
+
+        If the length of the ``stage`` parameter is too long (cannot pad with at least
+        one ``fill_char`` and one space on both sides), the message with any coloring is
+        printed as is.  Prefer shorter stage messages when possible.
 
     Parameters
     ----------
     stage : str
-        The description of the build stage to print to the console.
+        The description of the build stage to print to the console.  This is the only
+        required argument.
 
-    force_color : bool
-        Whether or not color should be forced.  Default: ``False`` (some Windows CI
-        providers seem to remove all lines with color sequences).
+    fill_char : str
+        A **length 1** string to use as the fill character.  Default: ``"="``.
+
+        .. warning::
+
+            No checks on the input are performed, but any non-length-1 string will
+            produce unattractive results.
+
+    color : str or None
+        The ANSI color code to use with :func:`colorize`.  If no coloring is desired,
+        call this function with ``color=None`` to disable.
+
+    style : str
+        The ANSI style specification to use with :func:`colorize`.  If no coloring is
+        desired, leave this parameter as is and specify ``color=None``.
+
+    width : int
+        If specified, the terminal size will be ignored and a message formatted to this
+        **positive** valued parameter will be used instead.  If the value is less than
+        the length of the ``stage`` message, this parameter is ignored.
+
+        .. note::
+
+            The specified width here does not necessarily equal the length of the string
+            printed.  The ANSI escape sequences added / trailing newline character will
+            make the printed string longer than ``width``, but the perceived width
+            printed to the terminal will be correct.
+
+            That is, if logging to a file, you may also desire to set ``color=None`` to
+            remove the ANSI escape sequences / achieve the actual desired width.
+
+    **kwargs : dict
+        If provided, ``**kwargs`` is forwarded to the :func:`python:print`.  E.g., to
+        specify ``file=some_log_file_object`` rather than printing to
+        :data:`python:sys.stdout`.
     """
-    prefix = colorize("==> ", color=Colors.Green, style=Styles.Bold, force=force_color)
-    print("{prefix}{stage}".format(prefix=prefix, stage=stage))
+    # Get desired width of output to format to.
+    full_width = width or shutil.get_terminal_size(fallback=(44, 24)).columns
+
+    # Compute usable areas to fill.
+    space_width = len(stage) + 2  # Add space before / after message
+    fill_width = full_width - space_width
+    # If it's too long to add at least (fill_width - 1) / 2 fill_char's, just print the
+    # message as is (as stated in docs, no fancy workarounds are created).
+    if fill_width < 3:
+        message = stage
+    else:
+        prefix_suffix = " "
+        suffix_prefix = " "
+        if fill_width % 2 == 0:
+            fill = fill_char * (fill_width // 2)
+        else:
+            fill = fill_char * ((fill_width - 1) // 2)
+            # Add an extra fill_char on suffix to fill screen.
+            suffix_prefix = "{suffix_prefix}{fill_char}".format(
+                suffix_prefix=suffix_prefix, fill_char=fill_char
+            )
+
+        # Create the full width message, colorize, and print.
+        prefix = "{fill}{prefix_suffix}".format(fill=fill, prefix_suffix=prefix_suffix)
+        suffix = "{suffix_prefix}{fill}".format(fill=fill, suffix_prefix=suffix_prefix)
+        message = "{prefix}{stage}{suffix}".format(
+            prefix=prefix, stage=stage, suffix=suffix
+        )
+    if color:
+        message = colorize(message, color=color, style=style)
+    print(message, **kwargs)

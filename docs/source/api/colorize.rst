@@ -1,14 +1,20 @@
 ci_exec.colorize
 ========================================================================================
 
-Module
-----------------------------------------------------------------------------------------
-
 .. automodule:: ci_exec.colorize
    :members:
+
+    .. currentmodule:: ci_exec.colorize
+    .. autosummary::
+
+        Ansi
+        Styles
+        Colors
+        colorize
+        log_stage
 
 Tests
 ----------------------------------------------------------------------------------------
 
-.. automodule:: testing.colorize
+.. automodule:: tests.colorize
    :members:

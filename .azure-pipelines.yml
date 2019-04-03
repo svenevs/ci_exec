@@ -70,7 +70,7 @@ jobs:
           py_version: 3.7
           image_short: Win64
   ######################################################################################
-  # Linux :: flake8                                                                    #
+  # Linux :: lint                                                                      #
   ######################################################################################
   - job: Lint
     pool:
@@ -83,7 +83,7 @@ jobs:
         displayName: Use Python 3.7
       - script: |
           pip install -U tox
-          tox -e flake8
+          tox -e lint
         displayName: Run Lint Checks
   ######################################################################################
   # Linux :: docs, linkcheck                                                           #
