@@ -25,7 +25,7 @@ import ci_exec  # noqa: E402, I100
 setup(
     name="ci_exec",
     version=ci_exec.__version__,
-    packages=find_packages(exclude=["testing", "testing.*"]),
+    packages=find_packages(exclude=["tests", "tests.*"]),
     zip_safe=True,
     url="https://github.com/svenevs/ci_exec"
 )
