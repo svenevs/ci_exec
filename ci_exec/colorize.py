@@ -29,37 +29,6 @@ class Ansi:
     """Convenience definition used to clear ANSI formatting."""
 
 
-class Styles:
-    """
-    A non-exhaustive list of ANSI style formats.
-
-    The styles included here are reliable across many terminals, more exotic styles such
-    as 'Blinking' are not included as they are not always supported.
-    """
-
-    Regular = "0m"
-    """The regular ANSI format."""
-
-    Bold = "1m"
-    """The bold ANSI format."""
-
-    Dim = "2m"
-    """The dim ANSI format."""
-
-    Underline = "4m"
-    """The underline ANSI format."""
-
-    Inverted = "7m"
-    """The inverted ANSI format."""
-
-    @classmethod
-    def all_styles(cls) -> tuple:
-        """Return a tuple of all style strings available (used in tests)."""
-        return (
-            Styles.Regular, Styles.Bold, Styles.Dim, Styles.Underline, Styles.Inverted
-        )
-
-
 class Colors:
     """The core ANSI color codes."""
 
@@ -96,9 +65,66 @@ class Colors:
         )
 
 
+class Styles:
+    """
+    A non-exhaustive list of ANSI style formats.
+
+    The styles included here are reliable across many terminals, more exotic styles such
+    as 'Blinking' are not included as they often are not supported.
+    """
+
+    Regular = ""
+    """The regular ANSI format."""
+
+    Bold = "1"
+    """The bold ANSI format."""
+
+    Dim = "2"
+    """The dim ANSI format."""
+
+    Underline = "4"
+    """The underline ANSI format."""
+
+    Inverted = "7"
+    """The inverted ANSI format."""
+
+    BoldUnderline = "1;4"
+    """Bold and underlined ANSI format."""
+
+    BoldInverted = "1;7"
+    """Bold and inverted ANSI format."""
+
+    BoldUnderlineInverted = "1;4;7"
+    """Bold, underlined, and inverted ANSI format."""
+
+    DimUnderline = "2;4"
+    """Dim and underlined ANSI format."""
+
+    DimInverted = "2;7"
+    """Dim and inverted ANSI format."""
+
+    DimUnderlineInverted = "2;4;7"
+    """Dim, underlined, and inverted ANSI format."""
+
+    @classmethod
+    def all_styles(cls) -> tuple:
+        """Return a tuple of all style strings available (used in tests)."""
+        return (
+            Styles.Regular, Styles.Bold, Styles.Dim, Styles.Underline, Styles.Inverted,
+            Styles.BoldUnderline, Styles.BoldInverted, Styles.BoldUnderlineInverted,
+            Styles.DimUnderline, Styles.DimInverted, Styles.DimUnderlineInverted
+        )
+
+
 def colorize(message: str, *, color: str, style: str=Styles.Regular) -> str:  # noqa: E252, E501
     """
     Return ``message`` colorized with specified style.
+
+    .. warning::
+
+        For both the ``color`` and ``style`` parameters, these are not supposed to have
+        the ``m`` after.  For example, a ``color="32m"`` is invalid, it should just be
+        ``"32"``.  Similarly, a ``style="1m"`` is invalid, it should just be ``"1"``.
 
     Parameters
     ----------
@@ -109,27 +135,46 @@ def colorize(message: str, *, color: str, style: str=Styles.Regular) -> str:  # 
     color : str
         A string describing the ANSI color code to use, e.g., :data:`Colors.Red`.
 
-        .. warning::
-
-            The color is not validated.  Things like ``32m`` with the ``m`` afterward
-            are unacceptable, and will produce gibberish.  This parameter is only the
-            color code.
-
     style : str
-        The ANSI style to use.  Default: :data:`Styles.Regular`.
+        The ANSI style to use.  Default: :data:`Styles.Regular`.  Note that any number
+        of ANSI style specifiers may be used, but it is assumed that the user has
+        already formed the semicolon delineated list.  For multiple ANSI specifiers,
+        see for example :data:`Styles.BoldUnderline`.  Semicolons should be on the
+        interior separating each style.
 
     Returns
     -------
     str
         The original message with the specified color escape sequence.
     """
-    return "{Escape}{color};{style}{message}{Clear}".format(
-        Escape=Ansi.Escape,
-        color=color,
-        style=style,
-        message=message,
-        Clear=Ansi.Clear
+    prefix = "{Escape}{color}".format(Escape=Ansi.Escape, color=color)
+    # Regular: `m` goes right after color without `;`
+    if style != "":
+        if not style.startswith(";"):
+            prefix += ";" + style
+    prefix += "m"
+
+    return "{prefix}{message}{Clear}".format(
+        prefix=prefix, message=message, Clear=Ansi.Clear
     )
+
+
+def dump_predefined_color_styles():
+    """Dump all predefined :class:`Colors` in every :class:`Styles` to the console."""
+    for c_key in Colors.__dict__.keys():
+        if not c_key[0].isupper():
+            continue
+        color = getattr(Colors, c_key)
+        for s_key in Styles.__dict__.keys():
+            if not s_key[0].isupper():
+                continue
+            style = getattr(Styles, s_key)
+
+            print(colorize(
+                "color={c_key}, style={s_key}".format(c_key=c_key, s_key=s_key),
+                color=color,
+                style=style
+            ))
 
 
 def log_stage(stage: str, *, fill_char: str="=", color: Optional[str]=Colors.Green,  # noqa: E252, E501

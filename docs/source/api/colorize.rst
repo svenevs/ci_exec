@@ -8,9 +8,10 @@ ci_exec.colorize
     .. autosummary::
 
         Ansi
-        Styles
         Colors
+        Styles
         colorize
+        dump_predefined_color_styles
         log_stage
 
 Tests
