@@ -116,7 +116,7 @@ class Styles:
         )
 
 
-def colorize(message: str, *, color: str, style: str=Styles.Regular) -> str:  # noqa: E252, E501
+def colorize(message: str, *, color: str, style: str = Styles.Regular) -> str:
     """
     Return ``message`` colorized with specified style.
 
@@ -177,8 +177,8 @@ def dump_predefined_color_styles():
             ))
 
 
-def log_stage(stage: str, *, fill_char: str="=", color: Optional[str]=Colors.Green,  # noqa: E252, E501
-              style: str=Styles.Bold, width: Optional[int]=None, **kwargs):          # noqa: E252, E501
+def log_stage(stage: str, *, fill_char: str = "=", color: Optional[str] = Colors.Green,
+              style: str = Styles.Bold, width: Optional[int] = None, **kwargs):
     """
     Print a terminal width block with ``stage`` message in the middle.
 
