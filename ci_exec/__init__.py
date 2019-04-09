@@ -16,8 +16,12 @@
 
 """This is a package that does things."""
 
-from .colorize import log_stage
-from .core import Executable, fail, mkdir, rmtree, which
+# Import the core utilities in the ci_exec "namespace" for simpler imports.
+from .colorize import Ansi, Colors, Styles, colorize, log_stage
+from .core import Executable, fail, mkdir_p, rm_rf, which
 
 __version__ = "0.1.0.dev"
-__all__ = ["Executable", "fail", "mkdir", "rmtree", "which", "log_stage"]
+__all__ = [
+    "Ansi", "Colors", "Styles", "colorize", "log_stage",
+    "Executable", "fail", "mkdir_p", "rm_rf", "which"
+]
