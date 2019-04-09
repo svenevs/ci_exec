@@ -19,9 +19,11 @@
 # Import the core utilities in the ci_exec "namespace" for simpler imports.
 from .colorize import Ansi, Colors, Styles, colorize, log_stage
 from .core import Executable, fail, mkdir_p, rm_rf, which
+from .patch import filter_file, unified_diff
 
 __version__ = "0.1.0.dev"
 __all__ = [
     "Ansi", "Colors", "Styles", "colorize", "log_stage",
-    "Executable", "fail", "mkdir_p", "rm_rf", "which"
+    "Executable", "fail", "mkdir_p", "rm_rf", "which",
+    "filter_file", "unified_diff"
 ]
