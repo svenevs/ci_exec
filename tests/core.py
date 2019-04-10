@@ -60,10 +60,10 @@ def test_fail(capsys, why: str, exit_code: int, no_prefix: bool):
 
 def test_executable_construction_failures():
     """Validate that non-absolute and non-(executable)file constructions will raise."""
-    # Absolute paths are expected.
+    # There is no `git` executable in this directory (user should have used `which`).
     with pytest.raises(ValueError) as relative_excinfo:
         Executable("git")
-    assert str(relative_excinfo.value) == "The path 'git' is not absolute."
+    assert str(relative_excinfo.value) == "The path 'git' is not a file."
 
     # It must be a file that exists.
     here = Path(".").resolve()
@@ -83,6 +83,21 @@ def test_executable_construction_failures():
     else:
         not_exe = "The path '{tox_ini}' is not executable.".format(tox_ini=tox_ini)
     assert str(non_executable_excinfo.value) == not_exe
+
+
+def test_executable_relative():
+    """Validate :class:`~ci_exec.core.Executable` accepts relative paths."""
+    if platform.system() != "Windows":
+        scripty_path = "./scripty.sh"
+        with open(scripty_path, "w") as scripty:
+            scripty.write("#!/bin/sh\necho 'hi, my name is scripty :)'\n")
+        chmod = which("chmod")
+        chmod("+x", scripty_path)
+        scripty = Executable(scripty_path, log_calls=False)
+        proc = scripty(stdout=PIPE, stderr=PIPE)
+        assert proc.returncode == 0
+        assert proc.stderr == b""
+        assert proc.stdout.decode("utf-8") == "hi, my name is scripty :)\n"
 
 
 def test_executable_logging(capsys):
