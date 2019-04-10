@@ -10,3 +10,4 @@ ci_exec
    core
    colorize
    patch
+   utils

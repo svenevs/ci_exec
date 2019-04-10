@@ -20,10 +20,16 @@
 from .colorize import Ansi, Colors, Styles, colorize, log_stage
 from .core import Executable, fail, mkdir_p, rm_rf, which
 from .patch import filter_file, unified_diff
+from .utils import merge_kwargs
 
 __version__ = "0.1.0.dev"
 __all__ = [
+    # Core imports from ci_exec.colorize module.
     "Ansi", "Colors", "Styles", "colorize", "log_stage",
+    # Core imports from ci_exec.core module.
     "Executable", "fail", "mkdir_p", "rm_rf", "which",
-    "filter_file", "unified_diff"
+    # Core imports from ci_exec.patch module.
+    "filter_file", "unified_diff",
+    # Core imports from ci_exec.utils module.
+    "merge_kwargs"
 ]
