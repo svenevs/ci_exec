@@ -96,7 +96,7 @@ class Executable:
     Attributes
     ----------
     exe_path : str
-        The **absolute** path to the executable that will be run when called.
+        The path to the executable that will be run when called.
 
     log_calls : bool
         Whether or not every invocation of :func:`__call__` should print what will
@@ -122,8 +122,7 @@ class Executable:
     Raises
     ------
     ValueError
-        If ``exe_path`` is not absolute, or is not a file.
-
+        If ``exe_path`` is not a file, or if it is not executable.
     """
 
     PATH_EXTENSIONS = set(
@@ -148,10 +147,6 @@ class Executable:
                  log_prefix: str = "$ ", log_color: Optional[str] = Colors.Cyan,
                  log_style: str = Styles.Bold):
         p = Path(exe_path)
-        if not p.is_absolute():
-            raise ValueError("The path '{exe_path}' is not absolute.".format(
-                exe_path=exe_path
-            ))
         if not p.is_file():
             raise ValueError("The path '{exe_path}' is not a file.".format(
                 exe_path=exe_path
@@ -168,8 +163,11 @@ class Executable:
                     exe_path=exe_path
                 ))
 
-        # Make sure to store the absolute file path as a string (3.6 generalized usage
-        # of pathlib.Path, but we are supporting 3.5).
+        # Store paths as absolute paths so that users can change working directory
+        # without needing to worry about relative paths.
+        if not p.is_absolute():
+            p = p.resolve()
+
         self.exe_path = str(p)
         self.log_calls = log_calls
         self.log_prefix = log_prefix
