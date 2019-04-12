@@ -7,6 +7,7 @@ ci_exec.utils
     .. currentmodule:: ci_exec.utils
     .. autosummary::
 
+        cd
         merge_kwargs
 
 Tests
