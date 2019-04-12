@@ -98,6 +98,7 @@ def test_executable_relative():
         assert proc.returncode == 0
         assert proc.stderr == b""
         assert proc.stdout.decode("utf-8") == "hi, my name is scripty :)\n"
+        rm_rf(scripty_path)
 
 
 def test_executable_logging(capsys):
