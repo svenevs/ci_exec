@@ -177,8 +177,10 @@ def dump_predefined_color_styles():
             ))
 
 
-def log_stage(stage: str, *, fill_char: str = "=", color: Optional[str] = Colors.Green,
-              style: str = Styles.Bold, width: Optional[int] = None, **kwargs):
+def log_stage(stage: str, *, fill_char: str = "=", pad: str = " ",
+              l_pad: Optional[str] = None, r_pad: Optional[str] = None,
+              color: Optional[str] = Colors.Green, style: str = Styles.Bold,
+              width: Optional[int] = None, **kwargs):
     """
     Print a terminal width block with ``stage`` message in the middle.
 
@@ -189,14 +191,14 @@ def log_stage(stage: str, *, fill_char: str = "=", color: Optional[str] = Colors
         ======================== CMake.Configure ========================
 
     By default, this will be printed using ANSI bold green to make it stick out.  If the
-    terminal size cannot be obtained, a width of ``44`` is assumed.  Specify ``width``
+    terminal size cannot be obtained, a width of ``80`` is assumed.  Specify ``width``
     if fixed width is desired.
 
     .. note::
 
         If the length of the ``stage`` parameter is too long (cannot pad with at least
-        one ``fill_char`` and one space on both sides), the message with any coloring is
-        printed as is.  Prefer shorter stage messages when possible.
+        one ``fill_char`` and the specified padding both sides), the message with any
+        coloring is printed as is.  Prefer shorter stage messages when possible.
 
     Parameters
     ----------
@@ -211,6 +213,32 @@ def log_stage(stage: str, *, fill_char: str = "=", color: Optional[str] = Colors
 
             No checks on the input are performed, but any non-length-1 string will
             produce unattractive results.
+
+    pad : str
+        A padding to insert both before and after ``stage``.  Default: ``" "``.  This
+        value can be any length, but may **not** be ``None``.  If no padding is desired,
+        use the empty string ``""``.  Some examples::
+
+            >>> log_stage("CMake.Configure")
+            ============================= CMake.Configure ==============================
+            >>> log_stage("CMake.Configure", fill_char="_", pad="")
+            ______________________________CMake.Configure_______________________________
+
+        See also: ``l_pad`` and ``r_pad`` if asymmetrical patterns are desired.
+
+    l_pad : str or None
+        A padding to insert before the ``stage`` (on the left).  Default: ``None``
+        (implies use value from ``pad`` parameter).  See examples in ``r_pad`` below.
+
+    r_pad : str or None
+        A padding to insert after the ``stage`` (on the right).  Default: ``None``
+        (implies use value from ``pad`` parameter).  Some examples::
+
+            >>> log_stage("CMake.Configure", fill_char="-", l_pad="+ ", r_pad=" +")
+            ----------------------------+ CMake.Configure +-----------------------------
+            # Without specifying r_pad, pad is used (default: " ")
+            >>> log_stage("CMake.Configure", fill_char="-", l_pad="+ ")
+            -----------------------------+ CMake.Configure -----------------------------
 
     color : str or None
         The ANSI color code to use with :func:`colorize`.  If no coloring is desired,
@@ -235,24 +263,30 @@ def log_stage(stage: str, *, fill_char: str = "=", color: Optional[str] = Colors
             That is, if logging to a file, you may also desire to set ``color=None`` to
             remove the ANSI escape sequences / achieve the actual desired width.
 
-    **kwargs : dict
+    **kwargs
         If provided, ``**kwargs`` is forwarded to the :func:`python:print`.  E.g., to
-        specify ``file=some_log_file_object`` rather than printing to
-        :data:`python:sys.stdout`.
+        specify ``file=some_log_file_object`` or ``file=sys.stderr`` rather than
+        printing to :data:`python:sys.stdout`.
     """
     # Get desired width of output to format to.
-    full_width = width or shutil.get_terminal_size(fallback=(44, 24)).columns
+    full_width = width or shutil.get_terminal_size().columns
+
+    if l_pad is None:
+        l_pad = pad
+    if r_pad is None:
+        r_pad = pad
 
     # Compute usable areas to fill.
-    space_width = len(stage) + 2  # Add space before / after message
-    fill_width = full_width - space_width
+    pad_width = len(l_pad) + len(r_pad)
+    stage_width = len(stage) + pad_width
+    fill_width = full_width - stage_width
     # If it's too long to add at least (fill_width - 1) / 2 fill_char's, just print the
     # message as is (as stated in docs, no fancy workarounds are created).
     if fill_width < 3:
         message = stage
     else:
-        prefix_suffix = " "
-        suffix_prefix = " "
+        prefix_suffix = l_pad
+        suffix_prefix = r_pad
         if fill_width % 2 == 0:
             fill = fill_char * (fill_width // 2)
         else:
