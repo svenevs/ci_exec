@@ -91,7 +91,7 @@ def test_executable_relative():
         scripty_path = "./scripty.sh"
         with open(scripty_path, "w") as scripty:
             scripty.write("#!/bin/sh\necho 'hi, my name is scripty :)'\n")
-        chmod = which("chmod")
+        chmod = which("chmod", log_calls=False)
         chmod("+x", scripty_path)
         scripty = Executable(scripty_path, log_calls=False)
         proc = scripty(stdout=PIPE, stderr=PIPE)
