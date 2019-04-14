@@ -38,7 +38,7 @@ def fail(why: str, *, exit_code: int = 1, no_prefix: bool = False) -> NoReturn:
     exit_code : int
         The exit code to use.  Default: ``1``.
 
-    no_prefix: bool
+    no_prefix : bool
         Whether to prefix a bold red ``"[X] "`` before ``why``.  Default: ``False``, the
         bold red ``"[X] "`` prefix is included unless set to ``True``.
     """
