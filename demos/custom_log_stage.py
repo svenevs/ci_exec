@@ -2,6 +2,8 @@
 """
 Simple demo for how to modify the ``ci_exec`` defaults to suit user preferences.
 
+.. youtube:: zMkv9ndgjVE
+
 By default :func:`~ci_exec.colorize.log_stage` will log in bold green, using ``"="`` as
 a separator.  This makes stages stick out / easy to spot during CI builds, but users may
 not prefer this style.  Instead of manually calling with explicit arguments each time::
