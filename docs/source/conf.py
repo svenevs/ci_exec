@@ -14,10 +14,18 @@
 import os
 import sys
 
+from docutils.nodes import definition_list
+from docutils.statemachine import StringList
+
+from sphinx.ext.autosummary import Autosummary  # type: ignore
+
+
 this_file_dir = os.path.dirname(os.path.abspath(__file__))
 root = os.path.dirname(os.path.dirname(this_file_dir))
+demos = os.path.join(root, "demos")
 sys.path.insert(0, root)
-import ci_exec  # noqa: E402
+sys.path.insert(1, demos)
+import ci_exec  # noqa: E402, I100
 
 
 # -- Project information ---------------------------------------------------------------
@@ -73,5 +81,48 @@ napoleon_google_docstring = False
 napoleon_numpy_docstring = True
 
 
+class DefinitionListSummary(Autosummary):
+    """Hack around autosummary to enumerate as definition list rather than a table."""
+
+    def get_table(self, items):
+        """Return a definition list rather than a table."""
+        # See original implementation:
+        # https://github.com/sphinx-doc/sphinx/blob/master/sphinx/ext/autosummary/__init__.py
+        source, line = self.state_machine.get_source_and_line()
+        src = "{source}:{line}:<dlistsummary>".format(source=source, line=line)
+
+        # We're going to build out a StringList by formatting a definition list and then
+        # parsing it at the end.  Definition list syntax:
+        #
+        # **First Item**
+        #     First item description, indented by four spaces.
+        # **Second Item**
+        #     Second item description, indented by four spaces.
+        s_list = StringList()
+        for name, signature, summary_string, real_name in items:
+            # Add the definition item.
+            s_list.append("**{name}**\n".format(name=name), src)
+
+            # Add the autosummary description for this demo, including a link to the
+            # full demonstration.  This is the definition of the item.
+            summary_string += "  :any:`Go to demo ↱ <{real_name}>`\n".format(
+                real_name=real_name
+            )
+            s_list.append("    " + summary_string, src)
+
+        # Now that we have a fully populated StringList, let Sphinx handle the dirty
+        # work of evaluating the rst as actual nodes.
+        node = definition_list("")
+        self.state.nested_parse(s_list, 0, node)
+        try:
+            if isinstance(node[0], definition_list):
+                node = node[0]
+        except IndexError:
+            pass
+
+        return [node]
+
+
 def setup(app):  # noqa: D103
     app.add_css_file("custom.css")
+    app.add_directive("dlistsummary", DefinitionListSummary)

@@ -1,0 +1,31 @@
+parameters:
+  parameters.image_short: ''  # e.g., 'Linux' or 'macOS' or 'Win64'
+
+steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: 3.7
+      architecture: 'x64'
+    displayName: Use Python 3.7
+  - script: |
+      pip install -U tox codecov coverage
+    displayName: Install Dependencies
+  ######################################################################################
+  # Each new demo: add new script: here, and in Demos Full Coverage below.             #
+  ######################################################################################
+  - script: |
+      tox -q -e demos -- custom_log_stage
+    displayName: Demo custom_log_stage
+  ######################################################################################
+  # Run the demos with the --animate flag to complete coverage analysis.  The console
+  # clearing may produce some odd artifacts in the logs online (`[H` shows up), aka
+  # IGNORE the output here ;).  Then run some extras / generate coverage.xml report.
+  - script: |
+      tox -e demos -- custom_log_stage --animate
+      coverage run -a demos/ --help
+      coverage xml -o coverage.xml
+    displayName: Demos Full Coverage (IGNORE)
+  - script: |
+      codecov --required -X gcov -f coverage.xml --name "[AzP] ${{ parameters.image_short }}-Demos" -t $(CODECOV_TOKEN)
+    displayName: Upload Code Coverage for Demos
+    condition: succeeded()
