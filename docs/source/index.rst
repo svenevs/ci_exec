@@ -5,4 +5,5 @@ ci_exec |release|
    :maxdepth: 2
    :caption: Full API Documentation
 
+   demos
    api/root
