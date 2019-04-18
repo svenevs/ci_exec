@@ -28,6 +28,10 @@ sys.path.insert(1, demos)
 import ci_exec  # noqa: E402, I100
 
 
+sys.path.insert(0, os.path.join(this_file_dir, "_extensions"))
+from youtube import Youtube, YoutubeDirective, depart_youtube_node, visit_youtube_node  # noqa: E402, E501
+
+
 # -- Project information ---------------------------------------------------------------
 project = "ci_exec"
 copyright = "2019, Stephen McDowell"
@@ -126,3 +130,6 @@ class DefinitionListSummary(Autosummary):
 def setup(app):  # noqa: D103
     app.add_css_file("custom.css")
     app.add_directive("dlistsummary", DefinitionListSummary)
+
+    app.add_node(Youtube, html=(visit_youtube_node, depart_youtube_node))
+    app.add_directive("youtube", YoutubeDirective)
