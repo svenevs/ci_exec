@@ -11,6 +11,7 @@ ci_exec.utils
         merge_kwargs
         set_env
         unset_env
+        Provider
 
 Tests
 ----------------------------------------------------------------------------------------
