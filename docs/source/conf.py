@@ -127,9 +127,35 @@ class DefinitionListSummary(Autosummary):
         return [node]
 
 
+class ProviderSummary(Autosummary):
+    """Generate an autosummary table for ci_exec.utils.Provider automatically."""
+
+    def get_items(self, names):
+        """Return parent class ``get_items`` with dynamic ``names`` list."""
+        all_providers = []
+        for key, val in ci_exec.Provider.__dict__.items():
+            if key.startswith("is_"):
+                # Use the fully qualified name here so Sphinx finds it.
+                # (avoid need to use .. currentmodule:: in docstring)
+                all_providers.append("ci_exec.utils.Provider.{key}".format(key=key))
+
+        return super().get_items(all_providers)
+
+    def get_table(self, items):
+        """Return parent class ``get_table`` with modified ``item``s."""
+        desired_items = []
+        for name, signature, summary_string, real_name in items:
+            # This is going in the class docstring, so just use the basename.  E.g.,
+            # ci_exec.utils.Provider.is_ci => is_ci
+            name = name.split(".")[-1]
+            desired_items.append((name, signature, summary_string, real_name))
+        return super().get_table(desired_items)
+
+
 def setup(app):  # noqa: D103
     app.add_css_file("custom.css")
     app.add_directive("dlistsummary", DefinitionListSummary)
+    app.add_directive("availableproviders", ProviderSummary)
 
     app.add_node(Youtube, html=(visit_youtube_node, depart_youtube_node))
     app.add_directive("youtube", YoutubeDirective)
