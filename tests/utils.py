@@ -21,7 +21,7 @@ from pathlib import Path
 from typing import Optional, Union
 
 from ci_exec.core import mkdir_p, rm_rf
-from ci_exec.utils import cd, merge_kwargs
+from ci_exec.utils import cd, merge_kwargs, set_env, unset_env
 
 import pytest
 
@@ -261,3 +261,257 @@ def test_merge_kwargs():
 
     custom_abc = manufacture(a=13, b=14, c=15)
     permute_assert(custom_abc, a=13, b=14, c=15)
+
+
+def test_set_env():
+    """Validate :func:`~ci_exec.utils.set_env` sets environment variables."""
+    with pytest.raises(ValueError) as exc_info:
+        @set_env()
+        def no_arguments_bad():
+            pass  # pragma: no cover
+    assert str(exc_info.value) == "set_env: at least one argument required."
+
+    with pytest.raises(ValueError) as exc_info:
+        @set_env(KEY=12)
+        def integer_value_bad():
+            pass  # pragma: no cover
+    assert str(exc_info.value) == "set_env: all keys and values must be strings."
+
+    # The actual environment setting test.
+    def set_env_decorator_test():
+        @set_env(CC="clang")
+        def set_cc():
+            @set_env(CXX="clang++")
+            def set_cxx():
+                @set_env(FC="flang")
+                def set_fc():
+                    @set_env(CC="gcc", CXX="g++", FC="gfortran")
+                    def nested_setting():
+                        assert os.environ["CC"] == "gcc"
+                        assert os.environ["CXX"] == "g++"
+                        assert os.environ["FC"] == "gfortran"
+                    # Test setting before and after.
+                    assert os.environ["CC"] == "clang"
+                    assert os.environ["CXX"] == "clang++"
+                    assert os.environ["FC"] == "flang"
+                    nested_setting()
+                    assert os.environ["CC"] == "clang"
+                    assert os.environ["CXX"] == "clang++"
+                    assert os.environ["FC"] == "flang"
+                # Test setting before and after.
+                assert os.environ["CC"] == "clang"
+                assert os.environ["CXX"] == "clang++"
+                assert "FC" not in os.environ
+                set_fc()
+                assert os.environ["CC"] == "clang"
+                assert os.environ["CXX"] == "clang++"
+                assert "FC" not in os.environ
+            # Test setting before and after.
+            assert os.environ["CC"] == "clang"
+            assert "CXX" not in os.environ
+            assert "FC" not in os.environ
+            set_cxx()
+            assert os.environ["CC"] == "clang"
+            assert "CXX" not in os.environ
+            assert "FC" not in os.environ
+        # Test setting before and after.
+        # NOTE: since we are in tox and CC / CXX are *NOT* in `passenv`, even if a user
+        # has CC / CXX setup these should not be set (!)
+        assert "CC" not in os.environ
+        assert "CXX" not in os.environ
+        assert "FC" not in os.environ
+        set_cc()
+        assert "CC" not in os.environ
+        assert "CXX" not in os.environ
+        assert "FC" not in os.environ
+
+    set_env_decorator_test()
+
+    # Same test only with `with`.
+    assert "CC" not in os.environ
+    assert "CXX" not in os.environ
+    assert "FC" not in os.environ
+    with set_env(CC="clang"):
+        assert os.environ["CC"] == "clang"
+        assert "CXX" not in os.environ
+        assert "FC" not in os.environ
+        with set_env(CXX="clang++"):
+            assert os.environ["CC"] == "clang"
+            assert os.environ["CXX"] == "clang++"
+            assert "FC" not in os.environ
+            with set_env(FC="flang"):
+                assert os.environ["CC"] == "clang"
+                assert os.environ["CXX"] == "clang++"
+                assert os.environ["FC"] == "flang"
+                with set_env(CC="gcc", CXX="g++", FC="gfortran"):
+                    assert os.environ["CC"] == "gcc"
+                    assert os.environ["CXX"] == "g++"
+                    assert os.environ["FC"] == "gfortran"
+                assert os.environ["CC"] == "clang"
+                assert os.environ["CXX"] == "clang++"
+                assert os.environ["FC"] == "flang"
+            assert os.environ["CC"] == "clang"
+            assert os.environ["CXX"] == "clang++"
+            assert "FC" not in os.environ
+        assert os.environ["CC"] == "clang"
+        assert "CXX" not in os.environ
+        assert "FC" not in os.environ
+    assert "CC" not in os.environ
+    assert "CXX" not in os.environ
+    assert "FC" not in os.environ
+
+    # Make sure that function arguments are passed through / return propagated.
+    @set_env(CC="icc", CXX="icpc", FC="ifort")
+    def func_returns(x: int, y: int, z: int = 3, w: int = 4) -> bool:
+        assert os.environ["CC"] == "icc"
+        assert os.environ["CXX"] == "icpc"
+        assert os.environ["FC"] == "ifort"
+        return (x + y + z) > w
+
+    assert func_returns(1, 2, 3, 4) == True  # noqa: E712
+    assert func_returns(1, 2, z=3) == True  # noqa: E712
+    assert func_returns(1, 2) == True  # noqa: E712
+    assert func_returns(1, 2, w=11) == False  # noqa: E712
+    args = [1, 2]
+    kwargs = {"z": -3, "w": 111}
+    assert func_returns(*args, **kwargs) == False  # noqa: E712
+
+
+def test_unset_env():
+    """Validate :func:`~ci_exec.utils.unset_env` unsets environment variables."""
+    with pytest.raises(ValueError) as exc_info:
+        @unset_env()
+        def no_arguments_bad():
+            pass  # pragma: no cover
+    assert str(exc_info.value) == "unset_env: at least one argument required."
+
+    with pytest.raises(ValueError) as exc_info:
+        @unset_env(12)
+        def integer_arg_bad():
+            pass  # pragma: no cover
+    assert str(exc_info.value) == "unset_env: all arguments must be strings."
+
+    with pytest.raises(ValueError) as exc_info:
+        @unset_env("KEY", 12, "ANOTHER_KEY")
+        def integer_arg_still_bad():
+            pass  # pragma: no cover
+    assert str(exc_info.value) == "unset_env: all arguments must be strings."
+
+    # The actual environment setting test.
+    def unset_env_decorator_test():
+        @unset_env("CC", "CXX", "FC")
+        def unset_all():
+            assert "CC" not in os.environ
+            assert "CXX" not in os.environ
+            assert "FC" not in os.environ
+
+        @set_env(CC="clang", CXX="clang++", FC="flang")
+        def set_llvm():
+            @set_env(CC="gcc", CXX="g++", FC="gfortran")
+            def set_gnu():
+                @set_env(CC="icc", CXX="icpc", FC="ifort")
+                def set_intel():
+                    # Test setting before and after.
+                    assert os.environ["CC"] == "icc"
+                    assert os.environ["CXX"] == "icpc"
+                    assert os.environ["FC"] == "ifort"
+                    unset_all()
+                    assert os.environ["CC"] == "icc"
+                    assert os.environ["CXX"] == "icpc"
+                    assert os.environ["FC"] == "ifort"
+                # Test setting before and after.
+                assert os.environ["CC"] == "gcc"
+                assert os.environ["CXX"] == "g++"
+                assert os.environ["FC"] == "gfortran"
+                set_intel()
+                unset_all()
+                assert os.environ["CC"] == "gcc"
+                assert os.environ["CXX"] == "g++"
+                assert os.environ["FC"] == "gfortran"
+            # Test setting before and after.
+            assert os.environ["CC"] == "clang"
+            assert os.environ["CXX"] == "clang++"
+            assert os.environ["FC"] == "flang"
+            set_gnu()
+            unset_all()
+            assert os.environ["CC"] == "clang"
+            assert os.environ["CXX"] == "clang++"
+            assert os.environ["FC"] == "flang"
+        # Test setting before and after.
+        assert "CC" not in os.environ
+        assert "CXX" not in os.environ
+        assert "FC" not in os.environ
+        set_llvm()
+        assert "CC" not in os.environ
+        assert "CXX" not in os.environ
+        assert "FC" not in os.environ
+
+    unset_env_decorator_test()
+
+    # Same test only with `with`.
+    assert "CC" not in os.environ
+    assert "CXX" not in os.environ
+    assert "FC" not in os.environ
+    with set_env(CC="clang", CXX="clang++", FC="flang"):
+        assert os.environ["CC"] == "clang"
+        assert os.environ["CXX"] == "clang++"
+        assert os.environ["FC"] == "flang"
+        with unset_env("CC", "CXX", "FC"):
+            assert "CC" not in os.environ
+            assert "CXX" not in os.environ
+            assert "FC" not in os.environ
+        with set_env(CC="gcc", CXX="g++", FC="gfortran"):
+            assert os.environ["CC"] == "gcc"
+            assert os.environ["CXX"] == "g++"
+            assert os.environ["FC"] == "gfortran"
+            with unset_env("CC", "CXX", "FC"):
+                assert "CC" not in os.environ
+                assert "CXX" not in os.environ
+                assert "FC" not in os.environ
+            with set_env(CC="icc", CXX="icpc", FC="ifort"):
+                assert os.environ["CC"] == "icc"
+                assert os.environ["CXX"] == "icpc"
+                assert os.environ["FC"] == "ifort"
+                with unset_env("CC", "CXX", "FC"):
+                    assert "CC" not in os.environ
+                    assert "CXX" not in os.environ
+                    assert "FC" not in os.environ
+                assert os.environ["CC"] == "icc"
+                assert os.environ["CXX"] == "icpc"
+                assert os.environ["FC"] == "ifort"
+            assert os.environ["CC"] == "gcc"
+            assert os.environ["CXX"] == "g++"
+            assert os.environ["FC"] == "gfortran"
+        assert os.environ["CC"] == "clang"
+        assert os.environ["CXX"] == "clang++"
+        assert os.environ["FC"] == "flang"
+    assert "CC" not in os.environ
+    assert "CXX" not in os.environ
+    assert "FC" not in os.environ
+
+    # Make sure that function arguments are passed through / return propagated.
+    @set_env(CC="icc", CXX="icpc", FC="ifort")
+    def func_returns_wrapper(*args, **kwargs):
+        @unset_env("CC", "CXX", "FC")
+        def func_returns(x: int, y: int, z: int = 3, w: int = 4) -> bool:
+            assert "CC" not in os.environ
+            assert "CXX" not in os.environ
+            assert "FC" not in os.environ
+            return (x + y + z) > w
+        # Test setting before and after.
+        assert os.environ["CC"] == "icc"
+        assert os.environ["CXX"] == "icpc"
+        assert os.environ["FC"] == "ifort"
+        ret = func_returns(*args, **kwargs)
+        assert os.environ["CC"] == "icc"
+        assert os.environ["CXX"] == "icpc"
+        assert os.environ["FC"] == "ifort"
+        return ret
+
+    assert func_returns_wrapper(1, 2, 3, 4) == True  # noqa: E712
+    assert func_returns_wrapper(1, 2, z=3) == True  # noqa: E712
+    assert func_returns_wrapper(1, 2) == True  # noqa: E712
+    assert func_returns_wrapper(1, 2, w=11) == False  # noqa: E712
+    args = [1, 2]
+    kwargs = {"z": -3, "w": 111}
+    assert func_returns_wrapper(*args, **kwargs) == False  # noqa: E712
