@@ -23,7 +23,7 @@ of the ``ci_exec`` package.
 import os
 from contextlib import ContextDecorator
 from pathlib import Path
-from typing import Union
+from typing import Dict, List, Union
 
 from .core import fail, mkdir_p
 
@@ -179,3 +179,181 @@ def merge_kwargs(defaults: dict, kwargs: dict):
             kwargs[key] = val
 
     return kwargs
+
+
+class set_env(ContextDecorator):  # noqa: N801
+    """
+    Context manager / decorator that can be used to set environment variables.
+
+    Usage example::
+
+        from ci_exec import set_env
+
+        @set_env(CC="clang", CXX="clang++")
+        def build_clang():
+            # CC="clang" and CXX="clang++" inside function.
+
+        # ... or ...
+
+        with set_env(CC="clang", CXX="clang++"):
+            # CC="clang" and CXX="clang++" in `with` block
+
+    Prior environment variable state will be recorded and later restored when a
+    decorated function / ``with`` block's scope ends.
+
+    1. An environment variable was already set.  Its value is saved before overwriting,
+       and then later restored::
+
+           # Example: CC=gcc was already set.
+           with set_env(CC="clang"):
+               # Inside block: CC="clang"
+           # Out-dented: CC=gcc again.
+
+    2. An environment variable was **not** already set.  Its value is unset again::
+
+           # Example: CC was _not_ set in environment.
+           with set_env(CC="clang"):
+               # Inside block: CC="clang"
+           # Out-dented: CC _not_ set in environment.
+
+    .. note::
+
+        See :ref:`note in unset_env <unset_env_note>` for more information on removing
+        environment variables.
+
+    Parameters
+    ----------
+    **kwargs
+        Keyword argument parameter pack.  Keys are the environment variable to set, and
+        values are the desired value of the environment variable.  All keys and all
+        values **must** be strings.
+
+    Raises
+    ------
+    ValueError
+        If no arguments are provided (``len(kwargs) == 0``), or if any keys / values are
+        **not** a :class:`python:str`.
+    """
+
+    def __init__(self, **kwargs: str):
+        # Need at least one environment variable to set.
+        if len(kwargs) == 0:
+            raise ValueError("set_env: at least one argument required.")
+
+        # Make sure all values are strings (required by os.environ).  All keys are
+        # implicitly strings -- constructing this class with non-string keys is a
+        # TypeError via Python and how **kwargs works <3
+        for env_var, env_val in kwargs.items():
+            if not isinstance(env_val, str):
+                raise ValueError("set_env: all keys and values must be strings.")
+
+        # Save state requested by user, do not inspect environment until __enter__.
+        self.set_env = {**kwargs}  # type: Dict[str, str]
+        self.restore_env = {}  # type: Dict[str, str]
+        self.delete_env = []  # type: List[str]
+
+    def __enter__(self):  # noqa: D105
+        for key, val in self.set_env.items():
+            # Create backups / record what needs to be deleted afterward.
+            curr = os.getenv(key, None)
+            if curr:
+                self.restore_env[key] = curr
+            else:
+                self.delete_env.append(key)
+
+            # Set the actual environment variable
+            os.environ[key] = val
+
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):  # noqa: D105
+        # Restore all previously set environment variables.
+        for key, val in self.restore_env.items():
+            os.environ[key] = val
+
+        # Remove any environment variables that were not previously set.
+        for key in self.delete_env:
+            # NOTE: need to double check it is there, nested @set_env that set the same
+            # variable will delete as the are __exit__ed, meaning an inner scope may
+            # have already deleted this.
+            if key in os.environ:
+                del os.environ[key]
+
+
+class unset_env(ContextDecorator):  # noqa: N801
+    """
+    Context manager / decorator that can be used to unset environment variables.
+
+    Usage example::
+
+        from ci_exec import unset_env
+
+        @unset_env("CC", "CXX")
+        def build():
+            # Neither CC nor CXX are set in the environment during this function call.
+
+        # ... or ...
+
+        with unset_env("CC", "CXX"):
+            # Neither CC nor CXX are set in the environment inside this block.
+
+    Prior environment variable state will be recorded and later restored when a
+    decorated function / ``with`` block's scope ends.  So if an environment variable was
+    already set, its value is saved before deletion, and then later restored::
+
+           # Example: CC=gcc was already set.
+           with unset_env("CC"):
+               # Inside block: CC not set in environment.
+           # Out-dented: CC=gcc again.
+
+    .. _unset_env_note:
+
+    .. note::
+
+        Removing the environment variable is done via ``del os.environ[env_var]``.  This
+        *may* or *may not* affect child processes in the manner you expect, depending on
+        whether your platform supports :func:`python:os.unsetenv`.  See the end of the
+        description of :data:`python:os.environ` for more information.
+
+    Parameters
+    ----------
+    *args
+        Argument parameter pack.  Each argument is an environment variable to unset.
+        Each argument **must** be a string.  If a specified argument is not currently
+        set in the environment, it will effectively be skipped.
+
+    Raises
+    ------
+    ValueError
+        If no arguments are provided (``len(args) == 0``), or if any arguments are
+        **not** a :class:`python:str`.
+    """
+
+    def __init__(self, *args: str):
+        # Need at least one environment variable to set.
+        if len(args) == 0:
+            raise ValueError("unset_env: at least one argument required.")
+
+        # Make sure every requested environment variable to unset is a string.
+        for a in args:
+            if not isinstance(a, str):
+                raise ValueError("unset_env: all arguments must be strings.")
+
+        # Save state requested by user, do not inspect environment until __enter__.
+        self.unset_env = [*args]  # type: List[str]
+        self.restore_env = {}  # type: Dict[str, str]
+
+    def __enter__(self):  # noqa: D105
+        for key in self.unset_env:
+            curr = os.getenv(key, None)
+            if curr:
+                # If the variable is set, save its current value and then delete it.
+                self.restore_env[key] = curr
+                del os.environ[key]
+
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):  # noqa: D105
+        # Restore all previously set environment variables.
+        for key, val in self.restore_env.items():
+            os.environ[key] = val
