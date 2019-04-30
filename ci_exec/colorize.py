@@ -309,4 +309,9 @@ def log_stage(stage: str, *, fill_char: str = "=", pad: str = " ",
         )
     if color:
         message = colorize(message, color=color, style=style)
-    print(message, **kwargs)
+
+    # TODO: undo this
+    import sys
+    sys.stderr.write("{message}\n".format(message=message))
+    sys.stderr.flush()
+    # print(message, **kwargs)
