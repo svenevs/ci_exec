@@ -1,19 +1,16 @@
-ci_exec.utils
+ci_exec.provider
 ========================================================================================
 
-.. automodule:: ci_exec.utils
+.. automodule:: ci_exec.provider
    :members:
 
-    .. currentmodule:: ci_exec.utils
+    .. currentmodule:: ci_exec.provider
     .. autosummary::
 
-        cd
-        merge_kwargs
-        set_env
-        unset_env
+        Provider
 
 Tests
 ----------------------------------------------------------------------------------------
 
-.. automodule:: tests.utils
+.. automodule:: tests.provider
    :members:

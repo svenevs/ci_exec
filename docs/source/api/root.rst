@@ -10,4 +10,5 @@ ci_exec
    core
    colorize
    patch
+   provider
    utils
