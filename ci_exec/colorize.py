@@ -147,6 +147,11 @@ def colorize(message: str, *, color: str, style: str = Styles.Regular) -> str:
     str
         The original message with the specified color escape sequence.
     """
+    # TODO: temporary hack
+    from .provider import Provider
+    if Provider.is_azure_pipelines():
+        return message
+
     prefix = "{Escape}{color}".format(Escape=Ansi.Escape, color=color)
     # Regular: `m` goes right after color without `;`
     if style != "":
