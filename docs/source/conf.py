@@ -137,7 +137,7 @@ class ProviderSummary(Autosummary):
             if key.startswith("is_"):
                 # Use the fully qualified name here so Sphinx finds it.
                 # (avoid need to use .. currentmodule:: in docstring)
-                all_providers.append("ci_exec.utils.Provider.{key}".format(key=key))
+                all_providers.append("ci_exec.provider.Provider.{key}".format(key=key))
 
         return super().get_items(all_providers)
 

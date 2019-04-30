@@ -20,7 +20,8 @@
 from .colorize import Ansi, Colors, Styles, colorize, log_stage
 from .core import Executable, fail, mkdir_p, rm_rf, which
 from .patch import filter_file, unified_diff
-from .utils import Provider, cd, merge_kwargs, set_env, unset_env
+from .provider import Provider
+from .utils import cd, merge_kwargs, set_env, unset_env
 
 __version__ = "0.1.0.dev"
 __all__ = [
@@ -30,6 +31,8 @@ __all__ = [
     "Executable", "fail", "mkdir_p", "rm_rf", "which",
     # Core imports from ci_exec.patch module.
     "filter_file", "unified_diff",
+    # Core imports from ci_exec.provider module.
+    "Provider",
     # Core imports from ci_exec.utils module.
-    "Provider", "cd", "merge_kwargs", "set_env", "unset_env"
+    "cd", "merge_kwargs", "set_env", "unset_env"
 ]
