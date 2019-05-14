@@ -1,6 +1,6 @@
 ci_exec
 ========================================================================================
-|docs| |azure| |travis| |coverage| |license|
+|docs| |azure| |travis| |coverage| |pypi| |py_versions| |license|
 
 .. begin_badges
 
@@ -8,17 +8,25 @@ ci_exec
    :alt: Documentation Status
    :target: http://ci-exec.readthedocs.io/
 
-.. |azure| image:: https://dev.azure.com/svenevs/ci_exec/_apis/build/status/svenevs.ci_exec?branchName=master
+.. |azure| image:: https://img.shields.io/azure-devops/build/svenevs/bb82882f-1c4c-4bf2-a2da-1d2146a7fb2a/5/master.svg?logo=azure-devops
    :alt: Azure Pipelines Build Status
    :target: https://dev.azure.com/svenevs/ci_exec/_build/latest?definitionId=5&branchName=master
 
-.. |travis| image:: https://travis-ci.com/svenevs/ci_exec.svg?branch=master
+.. |travis| image:: https://img.shields.io/travis/com/svenevs/ci_exec/master.svg?logo=Travis
    :alt: Travis CI Build Status
    :target: https://travis-ci.com/svenevs/ci_exec
 
 .. |coverage| image:: https://codecov.io/gh/svenevs/ci_exec/branch/master/graph/badge.svg
    :alt: Code Coverage Report
    :target: https://codecov.io/gh/svenevs/ci_exec
+
+.. |pypi| image:: https://badge.fury.io/py/ci_exec.svg
+   :alt: Latest Version
+   :target: https://badge.fury.io/py/ci_exec
+
+.. |py_versions| image:: https://img.shields.io/pypi/pyversions/ci_exec.svg
+   :alt: PyPI - Python Version
+   :target: https://pypi.org/project/ci_exec
 
 .. |license| image:: https://img.shields.io/github/license/svenevs/ci_exec.svg
    :alt: License Apache 2.0
