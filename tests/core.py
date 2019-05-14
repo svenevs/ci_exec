@@ -39,7 +39,7 @@ import pytest
     ]
 )
 def test_fail(capsys, why: str, exit_code: int, no_prefix: bool):
-    """Validate :func:`~ci_exec.core.fail` exits as expected."""
+    """Validate |fail| exits as expected."""
     with pytest.raises(SystemExit) as se_excinfo:
         # Make sure calling this raises SystemExit with appropriate code.
         fail(why, exit_code=exit_code, no_prefix=no_prefix)
@@ -86,7 +86,7 @@ def test_executable_construction_failures():
 
 
 def test_executable_relative():
-    """Validate :class:`~ci_exec.core.Executable` accepts relative paths."""
+    """Validate |Executable| accepts relative paths."""
     if platform.system() != "Windows":
         scripty_path = "./scripty.sh"
         with open(scripty_path, "w") as scripty:
@@ -102,7 +102,7 @@ def test_executable_relative():
 
 
 def test_executable_logging(capsys):
-    """Validate :class:`~ci_exec.core.Executable` runs and logs as expected."""
+    """Validate |Executable| runs and logs as expected."""
     # NOTE: capsys is not able to capture subprocess.run() output directly, so what we
     # do instead is run with PIPEs and print it to simulate how it would run normally.
     pipe = {"stdout": PIPE, "stderr": PIPE}
@@ -219,7 +219,7 @@ def test_executable_failures(capsys):
 
 
 def test_mkdir_p(capsys):
-    """Validate that :func:`~ci_exec.core.mkdir_p` creates directories as expected."""
+    """Validate that |mkdir_p| creates directories as expected."""
     # Relative paths should be ok.
     hello = Path("hello")
     rm_rf(hello)  # in case previous tests failed, start clean
@@ -278,7 +278,7 @@ def test_mkdir_p(capsys):
 
 
 def test_rm_rf(capsys):
-    """Validate :func:`~ci_exec.core.rm_rf` deletes files / directories as expected."""
+    """Validate |rm_rf| deletes files / directories as expected."""
     def stage(spec: dict):
         """
         Create the stage to (selectively) delete.
@@ -383,7 +383,7 @@ def test_rm_rf(capsys):
 
 
 def test_which(capsys):
-    """Validate that :func:`~ci_exec.core.which` finds or does not find executables."""
+    """Validate that |which| finds or does not find executables."""
     # Make sure ci_exec.core.which and shutil.which agree (how could then not? xD).
     git = which("git")
     git_path = shutil.which("git")

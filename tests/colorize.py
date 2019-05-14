@@ -63,7 +63,7 @@ def test_all_styles():
     [(c, s) for c in Colors.all_colors() for s in Styles.all_styles()]
 )
 def test_colorize(color: str, style: str):
-    """Test :func:`~ci_exec.colorize.colorize` colors as expected for each platform."""
+    """Test |colorize| colors as expected for each platform."""
     message = "colors!"
     colored = colorize(message, color=color, style=style)
 
@@ -142,7 +142,7 @@ def test_dump_predefined_color_styles(capsys):
 def test_log_stage(capsys, stage: str, fill_char_: Optional[str], pad_: Optional[str],
                    l_pad_: Optional[str], r_pad_: Optional[str], color_: Optional[str],
                    style_: str, width_: Optional[int]):
-    """Test :func:`~ci_exec.colorize.log_stage` prints the expected messages."""
+    """Test |log_stage| prints the expected messages."""
     # Setup call for log_stage as well as determine what the expected values are by
     # either using the parametrized argument or grabbing the default from log_stage.
     log_stage_kwargs = {}  # type: Dict[str, Any]

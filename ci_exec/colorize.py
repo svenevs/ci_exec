@@ -160,7 +160,7 @@ def colorize(message: str, *, color: str, style: str = Styles.Regular) -> str:
 
 
 def dump_predefined_color_styles():
-    """Dump all predefined :class:`Colors` in every :class:`Styles` to the console."""
+    """Dump all predefined |Colors| in every |Styles| to the console."""
     for c_key in Colors.__dict__.keys():
         if not c_key[0].isupper():
             continue
@@ -241,12 +241,12 @@ def log_stage(stage: str, *, fill_char: str = "=", pad: str = " ",
             -----------------------------+ CMake.Configure -----------------------------
 
     color : str or None
-        The ANSI color code to use with :func:`colorize`.  If no coloring is desired,
-        call this function with ``color=None`` to disable.
+        The ANSI color code to use with |colorize|.  If no coloring is desired, call
+        this function with ``color=None`` to disable.
 
     style : str
-        The ANSI style specification to use with :func:`colorize`.  If no coloring is
-        desired, leave this parameter as is and specify ``color=None``.
+        The ANSI style specification to use with |colorize|.  If no coloring is desired,
+        leave this parameter as is and specify ``color=None``.
 
     width : int
         If specified, the terminal size will be ignored and a message formatted to this

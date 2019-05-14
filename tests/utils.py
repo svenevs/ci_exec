@@ -27,7 +27,7 @@ import pytest
 
 
 def test_cd(capsys):
-    """Validate :class:`~ci_exec.utils.cd` behaves as expected."""
+    """Validate |cd| behaves as expected."""
     def wrap_cd(*, src: Union[Path, str], dest: Union[Path, str], create: bool,
                 err_endswith: Optional[str] = None, err_has: Optional[list] = None):
         """
@@ -216,7 +216,7 @@ def test_cd(capsys):
 
 
 def test_merge_kwargs():
-    """Validate :func:`~ci_exec.utils.merge_kwargs` merges as expected."""
+    """Validate |merge_kwargs| merges as expected."""
     def abc(a: int = 1, b: int = 2, c: int = 3):
         """Original function to customize."""
         return a + b + c
@@ -264,7 +264,7 @@ def test_merge_kwargs():
 
 
 def test_set_env():
-    """Validate :func:`~ci_exec.utils.set_env` sets environment variables."""
+    """Validate |set_env| sets environment variables."""
     with pytest.raises(ValueError) as exc_info:
         @set_env()
         def no_arguments_bad():
@@ -378,7 +378,7 @@ def test_set_env():
 
 
 def test_unset_env():
-    """Validate :func:`~ci_exec.utils.unset_env` unsets environment variables."""
+    """Validate |unset_env| unsets environment variables."""
     with pytest.raises(ValueError) as exc_info:
         @unset_env()
         def no_arguments_bad():

@@ -36,10 +36,10 @@ def filter_file(path: Union[Path, str], pattern: str,
        copying e.g., ``file.txt`` to ``file.txt.orig``.
     2. Perform filtering using :func:`python:re.sub`.
     3. If ``demand_different=True`` (default), verify that replacements were actually
-       made.  If not, :func:`~ci_exec.core.fail`.
+       made.  If not, |fail|.
 
     The only required arguments are ``path``, ``pattern``, and ``repl``.  If any errors
-    occur, including invalid input, this function will :func:`~ci_exec.core.fail`.
+    occur, including invalid input, this function will |fail|.
 
     .. |pass_through| replace:: Pass-through parameter to :func:`python:re.sub`.
 
@@ -73,9 +73,8 @@ def filter_file(path: Union[Path, str], pattern: str,
         regular expressions depending on the replacement needed.
 
     demand_different : bool
-        Whether or not this function should :func:`~ci_exec.core.fail` if no changes
-        were actually made.  Default: ``True``, :func:`~ci_exec.core.fail` if no
-        filtering was performed.
+        Whether or not this function should |fail| if no changes were actually made.
+        Default: ``True``, |fail| if no filtering was performed.
 
     encoding : str or None
         The encoding to open files with.  Default: ``None`` implies default.
@@ -143,8 +142,8 @@ def unified_diff(from_path: Union[Path, str], to_path: Union[Path, str], n: int 
     r"""
     Return the :func:`unified_diff <difflib.unified_diff>` between two files.
 
-    Any errors, such as not being able to read a file, will :func:`~ci_exec.core.fail`
-    the application abruptly.
+    Any errors, such as not being able to read a file, will |fail| the application
+    abruptly.
 
     Parameters
     ----------

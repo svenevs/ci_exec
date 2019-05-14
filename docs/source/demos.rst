@@ -16,6 +16,8 @@ Demos
 ..
 .. It was kind of a happy accident, but it is quite nice :D
 
+*More demos, particularly related to building C++, will be added when possible.*
+
 .. currentmodule:: demos
 
 .. dlistsummary::

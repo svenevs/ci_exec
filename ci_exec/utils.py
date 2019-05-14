@@ -77,8 +77,8 @@ class cd(ContextDecorator):  # noqa: N801
 
     create : bool
         Whether or not the ``dest`` is allowed to be created.  Default: ``False``, the
-        ``dest`` must exist already (will :func:`~ci_exec.core.fail` if it does not).
-        If ``True``, :func:`~ci_exec.core.mkdir_p` will be called with ``dest``.
+        ``dest`` must exist already (will |fail| if it does not).  If ``True``,
+        |mkdir_p| will be called with ``dest``.
     """
 
     def __init__(self, dest: Union[str, Path], *, create: bool = False):

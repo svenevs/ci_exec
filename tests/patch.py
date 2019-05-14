@@ -48,7 +48,7 @@ def _make_dummy() -> Tuple[Path, Path]:
 
 
 def test_filter_file(capsys):
-    """Validate that :func:`~ci_exec.patch.filter_file` patches / errors as expected."""
+    """Validate that |filter_file| patches / errors as expected."""
     # Non-existent files cannot be patched.
     with pytest.raises(SystemExit):
         filter_file("i_dont_exist", "boom", "blam")
@@ -118,7 +118,7 @@ def test_filter_file(capsys):
 
 
 def test_unified_diff(capsys):
-    """Validate that :func:`~ci_exec.patch.unified_diff` diffs / errors as expected."""
+    """Validate that |unified_diff| diffs / errors as expected."""
     # Invalid from_file should exit.
     with pytest.raises(SystemExit):
         unified_diff("i_am_not_here", "tox.ini")

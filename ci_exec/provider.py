@@ -28,7 +28,7 @@ else:
         """
         Mark a function as a CI provider.
 
-        **Not intended for use outside of the** :class:`Provider` **class**.
+        **Not intended for use outside of the** |Provider| **class**.
 
         Parameters
         ----------
@@ -49,7 +49,7 @@ else:
 
 class ProviderMeta(type):
     """
-    Metaclass for :class:`Provider`.
+    Metaclass for |Provider|.
 
     This metaclass populates :attr:`Provider._all_provider_functions` by coordinating
     with the :func:`provider` decorator.

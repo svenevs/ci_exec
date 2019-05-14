@@ -35,7 +35,7 @@ _all_providers = [*_generic_providers, *_specific_providers]
 
 
 def provider_sum():
-    """Return number of :class:`~ci_exec.provider.Provider`'s that return ``True``."""
+    """Return number of |Provider|'s that return ``True``."""
     return sum([provider() for provider in Provider._all_provider_functions])
 
 
