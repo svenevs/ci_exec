@@ -16,6 +16,13 @@ About
    :start-after: begin_long_desc
    :end-before: end_long_desc
 
+Installation
+----------------------------------------------------------------------------------------
+
+.. include:: ../../README.rst
+   :start-after: begin_install
+   :end-before: end_install
+
 Intended Audience
 ----------------------------------------------------------------------------------------
 

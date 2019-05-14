@@ -20,13 +20,13 @@ ci_exec
    :alt: Code Coverage Report
    :target: https://codecov.io/gh/svenevs/ci_exec
 
-.. |pypi| image:: https://badge.fury.io/py/ci_exec.svg
+.. |pypi| image:: https://badge.fury.io/py/ci-exec.svg
    :alt: Latest Version
-   :target: https://badge.fury.io/py/ci_exec
+   :target: https://badge.fury.io/py/ci-exec
 
-.. |py_versions| image:: https://img.shields.io/pypi/pyversions/ci_exec.svg
+.. |py_versions| image:: https://img.shields.io/pypi/pyversions/ci-exec.svg
    :alt: PyPI - Python Version
-   :target: https://pypi.org/project/ci_exec
+   :target: https://pypi.org/project/ci-exec
 
 .. |license| image:: https://img.shields.io/github/license/svenevs/ci_exec.svg
    :alt: License Apache 2.0
@@ -85,6 +85,30 @@ Please refer to the `full documentation <https://ci-exec.readthedocs.io/en/lates
 for more information.
 
 .. end_final_desc
+
+Installation
+========================================================================================
+
+.. begin_install
+
+``ci_exec`` is `available on PyPi <https://pypi.org/project/ci-exec/>`_.  It can be
+installed using your favorite python package manager:
+
+.. code-block:: console
+
+    $ pip install ci-exec
+
+.. tip::
+
+    The PyPi package has a ``-``: ``ci-exec``, not ``ci_exec``.
+
+There is also a ``setup.py`` here, so you can also install it from source:
+
+.. code-block:: console
+
+    $ pip install git+https://github.com/svenevs/ci_exec.git@master
+
+.. end_install
 
 License
 ========================================================================================
