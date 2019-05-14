@@ -26,4 +26,60 @@ ci_exec
 
 .. end_badges
 
-Minimal python wrapper designed for running CI build steps via Python.
+.. begin_brief_desc
+
+A wrapper package designed for running continuous integration (CI) build steps using
+Python 3.5+.
+
+.. end_brief_desc
+
+.. begin_long_desc
+
+Managing cross platform build scripts for CI can become tedious at times when you need
+to e.g., maintain two nearly identical scripts ``install_deps.sh`` and
+``install_deps.bat`` due to incompatible syntaxes.  ``ci_exec`` enables a single file
+to manage this using Python.
+
+The ``ci_exec`` package provides a set of wrappers / utility functions designed
+specifically for running build steps on CI providers.  It is
+
+**Logging by Default**
+    Commands executed, including their full command-line arguments, are logged.  This
+    includes any output on ``stdout`` / ``stderr`` from the commands.  The logging
+    resembles what ``set -x`` would give you in a shell script.  For commands that will
+    take a long time, as long as output is being produced, this will additionally
+    prevent timeouts on the build.
+
+**Failing by Default**
+    Any command that does not succeed will fail the entire build.  An attempt to exit
+    with the same exit code as the command that failed will be performed.  Meaning the
+    CI provider will correctly report a failed build.
+
+**Convenient**
+    ``ci_exec`` affords users the ability to write shell-like scripts that will work
+    on any platform that Python can run on.  A simple example:
+
+    .. code-block:: py
+
+        from ci_exec import cd, which
+
+        cmake = which("cmake")
+        ninja = which("ninja")
+        with cd("build", create=True):
+            cmake("..", "-G", "Ninja", "-DCMAKE_BUILD_TYPE=Release")
+            ninja("-j", "2", "test")
+
+.. end_long_desc
+
+.. begin_final_desc
+
+Please refer to the `full documentation <https://ci-exec.readthedocs.io/en/latest/>`_
+for more information.
+
+.. end_final_desc
+
+License
+========================================================================================
+
+This software is licensed under the Apache 2.0 license.
+

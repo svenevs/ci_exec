@@ -57,7 +57,7 @@ class Executable:
     Each executable is:
 
     1. Failing by default: unless called with ``check=False``, any execution
-       that fails (has a non-zero exit code) will result in a call to :func:`fail`,
+       that fails (has a non-zero exit code) will result in a call to |fail|,
        terminating the entire application.
     2. Logging by default: every call executed will print what will be run in color
        and then dump the output of the command.  In the event of failure, this makes
@@ -76,7 +76,7 @@ class Executable:
 
     .. code-block:: console
 
-        > python lala.py
+        > python simple.py
         $ /usr/bin/git remote
         origin
         $ /usr/bin/git log -1 --petty=%B
@@ -86,12 +86,12 @@ class Executable:
         > echo $?
         128
 
-    See :func:`__call__` for more information on how this works.
+    See :func:`__call__` for more information.
 
     .. tip::
 
         Hard-coded paths in these examples were for demonstrative purposes.  In practice
-        this should not be done, use :func:`which` instead.
+        this should not be done, use |which| instead.
 
     Attributes
     ----------
@@ -108,16 +108,14 @@ class Executable:
         ``""`` to have no prefix.
 
     log_color : str
-        The ``color`` code to use when calling :func:`~ci_exec.colorize.colorize` to
-        display the next invocation of :func:`__call__`.  Set to ``None`` to disable
-        colorizing each log of :func:`__call__`.  Default:
-        :data:`Colors.Cyan <ci_exec.colorize.Colors.Cyan>`.
+        The ``color`` code to use when calling |colorize| to display the next invocation
+        of :func:`__call__`.  Set to ``None`` to disable colorizing each log of
+        :func:`__call__`.  Default: :data:`Colors.Cyan <ci_exec.colorize.Colors.Cyan>`.
 
     log_style : str
-        The ``style`` code to use when calling :func:`~ci_exec.colorize.colorize` to
-        display the next invocation of :func:`__call__`.  If no colors are desired, set
-        ``log_color`` to ``None``.  Default:
-        :data:`Styles.Bold <ci_exec.colorize.Styles.Bold>`.
+        The ``style`` code to use when calling |colorize| to display the next invocation
+        of :func:`__call__`.  If no colors are desired, set ``log_color`` to ``None``.
+        Default: :data:`Styles.Bold <ci_exec.colorize.Styles.Bold>`.
 
     Raises
     ------
@@ -174,7 +172,7 @@ class Executable:
         self.log_color = log_color
         self.log_style = log_style
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args, **kwargs) -> subprocess.CompletedProcess:
         """
         Run :attr:`exe_path` with the specified command-line ``*args``.
 
@@ -194,7 +192,7 @@ class Executable:
 
         .. warning::
 
-            **Any** exceptions generated result in a call to :func:`fail`, which will
+            **Any** exceptions generated result in a call to |fail|, which will
             terminate the application.
 
         Parameters
@@ -206,8 +204,8 @@ class Executable:
         **kwargs
             The key-value arguments are all forwarded to :func:`python:subprocess.run`.
             If ``check`` is not provided, this is an implicit ``check=True``.  That is,
-            if you do **not** want the application to exit (via :func:`fail`), you
-            **must** specify ``check=False``:
+            if you do **not** want the application to exit (via |fail|), you **must**
+            specify ``check=False``:
 
             .. code-block:: python
 
@@ -267,9 +265,11 @@ class Executable:
             # is executing.
             try:
                 # NOTE: 3.5 has no ending period, 3.6+ do.
-                exit_code = int(
-                    re.match(r".*non-zero exit status (\d+)\.?", err_msg).group(1)
-                )
+                match = re.match(r".*non-zero exit status (\d+)\.?", err_msg)
+                if match:
+                    exit_code = int(match.group(1))
+                else:
+                    exit_code = 1
             except:  # noqa: E722
                 exit_code = 1
             fail(err_msg, exit_code=exit_code)
@@ -306,7 +306,7 @@ def mkdir_p(path: Union[Path, str], mode: int = 0o777, parents: bool = True,
 
             If the path exists and is a directory with ``exist_ok=True``, the command
             will succeed.  If the path exists and is a **file**, even with
-            ``exist_ok=True`` the command will :func:`fail`.
+            ``exist_ok=True`` the command will |fail|.
     """
     if isinstance(path, str):
         path = Path(path)
@@ -318,11 +318,7 @@ def mkdir_p(path: Union[Path, str], mode: int = 0o777, parents: bool = True,
 
 def rm_rf(path: Union[Path, str], ignore_errors: bool = False, onerror=None):
     """
-    Permissive wrapper around :func:`python:shutil.rmtree` bypassing |gotchas|.
-
-    .. |gotchas| replace::
-
-        :class:`python:FileNotFoundError` and :class:`python:NotADirectoryError`
+    Permissive wrapper around :func:`python:shutil.rmtree` bypassing :class:`python:FileNotFoundError` and :class:`python:NotADirectoryError`.
 
     This function simply checks if ``path`` exists first before calling
     :func:`python:shutil.rmtree`.  If the ``path`` does not exist, nothing is done.  If
@@ -330,7 +326,7 @@ def rm_rf(path: Union[Path, str], ignore_errors: bool = False, onerror=None):
 
     Essentially, this function tries to behave like ``rm -rf``, but in the event that
     removal is not possible (e.g., due to insufficient permissions), the function will
-    still :func:`fail`.
+    still |fail|.
 
     Parameters
     ----------
@@ -343,7 +339,7 @@ def rm_rf(path: Union[Path, str], ignore_errors: bool = False, onerror=None):
 
     onerror
         See :func:`python:shutil.rmtree` for more information on the callback.
-    """
+    """  # noqa: E501
     if isinstance(path, str):
         path = Path(path)
     if not path.exists():
@@ -360,13 +356,11 @@ def rm_rf(path: Union[Path, str], ignore_errors: bool = False, onerror=None):
 def which(cmd: str, *, mode: int = (os.F_OK | os.X_OK), path: Optional[str] = None,
           **kwargs) -> Executable:
     """
-    Restrictive wrapper around |shutil_which| that will :func:`fail` if not found.
-
-    .. |shutil_which| replace:: :func:`python:shutil.which`
+    Restrictive wrapper around :func:`shutil.which` that will |fail| if not found.
 
     The primary difference is that when ``cmd`` is not found,
     :func:`python:shutil.which` will return ``None`` whereas this function will
-    :func:`fail`.  If you need to conditionally check for a command, do **not** use this
+    |fail|.  If you need to conditionally check for a command, do **not** use this
     function, use :func:`python:shutil.which` instead.
 
     Parameters
@@ -382,9 +376,8 @@ def which(cmd: str, *, mode: int = (os.F_OK | os.X_OK), path: Optional[str] = No
         Default: ``None``.  See :func:`python:shutil.which`.
 
     **kwargs
-        Included as a convenience bypass, forwards directly to :class:`Executable`
-        constructor.  Suppose a non-logging :class:`Executable` is desired.  One
-        option::
+        Included as a convenience bypass, forwards directly to |Executable| constructor.
+        Suppose a non-logging |Executable| is desired.  One option::
 
             git = which("git")
             git.log_calls = False

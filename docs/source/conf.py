@@ -13,6 +13,7 @@
 #
 import os
 import sys
+from types import FunctionType
 
 from docutils.nodes import definition_list
 from docutils.statemachine import StringList
@@ -85,6 +86,38 @@ napoleon_google_docstring = False
 napoleon_numpy_docstring = True
 
 
+def get_all_top_level():
+    """Return list of fully qualified strings for ci_exec top level names."""
+    top_level = []
+    for item in ci_exec.__all__:
+        module = getattr(ci_exec, item).__module__
+        full_item = "{module}.{item}".format(module=module, item=item)
+        top_level.append(full_item)
+
+    return top_level
+
+
+def top_level_replacements():
+    """Return list of rst replacement text."""
+    top_level = get_all_top_level()
+    all_repl = []
+    for full in top_level:
+        base = full.split(".")[-1]
+        if isinstance(getattr(ci_exec, base), FunctionType):
+            short = "{base}()".format(base=base)
+        else:
+            short = base
+        repl = ".. |{base}| replace:: :any:`{short} <{full}>`".format(
+            base=base, short=short, full=full
+        )
+        all_repl.append(repl)
+    return all_repl
+
+
+# Make top-level imports available directly using substitutions.
+rst_epilog = "\n".join(top_level_replacements())
+
+
 class DefinitionListSummary(Autosummary):
     """Hack around autosummary to enumerate as definition list rather than a table."""
 
@@ -140,6 +173,31 @@ class ProviderSummary(Autosummary):
                 all_providers.append("ci_exec.provider.Provider.{key}".format(key=key))
 
         return super().get_items(all_providers)
+
+    def get_table(self, items):
+        """Return parent class ``get_table`` with modified ``item``s."""
+        desired_items = []
+        for name, signature, summary_string, real_name in items:
+            # This is going in the class docstring, so just use the basename.  E.g.,
+            # ci_exec.utils.Provider.is_ci => is_ci
+            name = name.split(".")[-1]
+            desired_items.append((name, signature, summary_string, real_name))
+        return super().get_table(desired_items)
+
+
+# NOTE: inherit ProviderSummary to re-use its get_table.
+class CoreSummary(Autosummary):
+    """Generate an autosummary for ci_exec top-level namespace."""
+
+    def get_items(self, names):
+        """Return parent class ``get_items`` with dynamic ``names`` list."""
+        all_items = []
+        for item in ci_exec.__all__:
+            module = getattr(ci_exec, item).__module__
+            full_item = "{module}.{item}".format(module=module, item=item)
+            all_items.append(full_item)
+
+        return super().get_items(all_items)
 
     def get_table(self, items):
         """Return parent class ``get_table`` with modified ``item``s."""
@@ -213,6 +271,7 @@ def setup(app):  # noqa: D103
     app.add_css_file("custom.css")
     app.add_directive("dlistsummary", DefinitionListSummary)
     app.add_directive("availableproviders", ProviderSummary)
+    app.add_directive("coresummary", CoreSummary)
 
     app.add_node(Youtube, html=(visit_youtube_node, depart_youtube_node))
     app.add_directive("youtube", YoutubeDirective)

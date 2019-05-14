@@ -13,8 +13,7 @@
 # See the License for the specific language governing permissions and                  #
 # limitations under the License.                                                       #
 ########################################################################################
-
-"""This is a package that does things."""
+"""The ``ci_exec`` package top-level namespace."""
 
 # Import the core utilities in the ci_exec "namespace" for simpler imports.
 from .colorize import Ansi, Colors, Styles, colorize, log_stage
