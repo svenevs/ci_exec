@@ -1,3 +1,6 @@
-sphinx>=2.0.0
+# NOTE: undo this when https://github.com/sphinx-doc/sphinx/pull/6353 is published and
+#       solution to monkey_patch_autodoc in conf.py is achieved.
+git+https://github.com/sphinx-doc/sphinx.git@2.0
+# sphinx>=2.0.0
 sphinx_rtd_theme
 pytest
