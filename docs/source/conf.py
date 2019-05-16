@@ -51,7 +51,8 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx.ext.intersphinx",
     "sphinx.ext.napoleon",
-    "sphinx.ext.viewcode"
+    "sphinx.ext.viewcode",
+    "sphinx_issues"
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -84,6 +85,9 @@ intersphinx_mapping = {
 
 napoleon_google_docstring = False
 napoleon_numpy_docstring = True
+
+# See: https://github.com/sloria/sphinx-issues
+issues_github_path = "svenevs/ci_exec"
 
 
 def get_all_top_level():

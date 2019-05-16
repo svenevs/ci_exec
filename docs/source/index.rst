@@ -84,3 +84,4 @@ Quick reference:
    api/root
    demos
    important_usage_notes
+   changelog
