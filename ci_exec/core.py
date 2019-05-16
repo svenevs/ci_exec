@@ -269,14 +269,14 @@ class Executable:
             # Try and mirror the exit code if possible, subprocess.run will raise an
             # exception when check=True, but this may not necessarily be why this code
             # is executing.
-            try:
-                # NOTE: 3.5 has no ending period, 3.6+ do.
-                match = re.match(r".*non-zero exit status (\d+)\.?", err_msg)
-                if match:
+            # NOTE: 3.5 has no ending period, 3.6+ do.
+            match = re.match(r".*non-zero exit status (\d+)\.?", err_msg)
+            if match:
+                try:
                     exit_code = int(match.group(1))
-                else:
-                    exit_code = 1
-            except:  # noqa: E722
+                except:  # noqa: E722 # pragma: no cover
+                    exit_code = 1     # pragma: no cover
+            else:
                 exit_code = 1
             fail(err_msg, exit_code=exit_code)
 
