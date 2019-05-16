@@ -20,9 +20,9 @@ ci_exec
    :alt: Code Coverage Report
    :target: https://codecov.io/gh/svenevs/ci_exec
 
-.. |pypi| image:: https://badge.fury.io/py/ci-exec.svg
-   :alt: Latest Version
-   :target: https://badge.fury.io/py/ci-exec
+.. |pypi| image:: https://img.shields.io/pypi/v/ci-exec.svg
+   :alt: PyPI Version
+   :target: https://pypi.org/project/ci-exec/
 
 .. |py_versions| image:: https://img.shields.io/pypi/pyversions/ci-exec.svg
    :alt: PyPI - Python Version
