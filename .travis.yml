@@ -10,7 +10,37 @@ matrix:
   include:
     - os: linux
       language: python
-      python: 3.5
+      python: 3.7
+      services:
+        - docker
+      before_install:
+        - docker pull python:3.5.0
+        - docker run -itd --name py350 python:3.5.0 /bin/sh
+        - docker cp . py350:/data
+      install:
+        - docker exec py350 pip install tox
+      script:
+        - docker exec --workdir /data py350 tox -e py -- --cov-report xml:coverage.xml --cov
+        - docker cp py350:/data/coverage.xml .
+        - docker stop py350
+      after_success:
+        - pip install codecov
+        - codecov --required -X gcov -f coverage.xml --name "[Travis] docker-py3.5.0"
+      env: PY=3.5.0
+    - os: linux
+      # NOTE: using language: generic on xenial to specifically get 3.5.2, which
+      # does not have NoReturn in typing.  Acquiring 3.5.0 on Ubuntu is
+      # challenging even to build from source due to OpenSSL ABI changes.
+      language: generic
+      addons:
+        apt:
+          packages:
+            - python3.5
+            - python3.5-dev
+            - python3.5-venv
+      before_install:
+        - python3 -m venv venv
+        - source venv/bin/activate
       env: PY=3.5
     - os: linux
       language: python
