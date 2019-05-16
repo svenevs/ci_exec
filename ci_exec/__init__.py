@@ -13,7 +13,13 @@
 # See the License for the specific language governing permissions and                  #
 # limitations under the License.                                                       #
 ########################################################################################
-"""The ``ci_exec`` package top-level namespace."""
+"""
+The ``ci_exec`` package top-level namespace.
+
+Quick Reference:
+
+.. coresummary::
+"""
 
 # Import the core utilities in the ci_exec "namespace" for simpler imports.
 from .colorize import Ansi, Colors, Styles, colorize, log_stage
@@ -22,7 +28,7 @@ from .patch import filter_file, unified_diff
 from .provider import Provider
 from .utils import cd, merge_kwargs, set_env, unset_env
 
-__version__ = "0.1.0"
+__version__ = "0.1.0.post0"
 __all__ = [
     # Core imports from ci_exec.colorize module.
     "Ansi", "Colors", "Styles", "colorize", "log_stage",

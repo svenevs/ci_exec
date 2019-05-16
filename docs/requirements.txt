@@ -4,3 +4,4 @@ git+https://github.com/sphinx-doc/sphinx.git@2.0
 # sphinx>=2.0.0
 sphinx_rtd_theme
 pytest
+sphinx-issues
