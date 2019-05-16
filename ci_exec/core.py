@@ -21,7 +21,13 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
-from typing import NoReturn, Optional, Union
+from typing import Optional, Union
+
+# NoReturn not available in all 3.5.
+try:
+    from typing import NoReturn
+except ImportError:
+    NoReturn = None
 
 from .colorize import Colors, Styles, colorize
 
