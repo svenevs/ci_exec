@@ -100,22 +100,6 @@ jobs:
         parameters:
           image_short: Win64
   ######################################################################################
-  # Linux :: lint                                                                      #
-  ######################################################################################
-  - job: Lint
-    pool:
-      vmImage: 'ubuntu-16.04'
-    steps:
-      - task: UsePythonVersion@0
-        inputs:
-          versionSpec: '3.7'
-          architecture: 'x64'
-        displayName: Use Python 3.7
-      - script: |
-          pip install -U tox
-          tox -e lint
-        displayName: Run Lint Checks
-  ######################################################################################
   # Linux :: docs, linkcheck                                                           #
   ######################################################################################
   - job: Docs_Linkcheck

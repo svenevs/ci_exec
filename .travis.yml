@@ -9,8 +9,7 @@ branches:
 matrix:
   include:
     - os: linux
-      language: python
-      python: 3.7
+      language: generic
       services:
         - docker
       before_install:
@@ -50,6 +49,10 @@ matrix:
       language: python
       python: 3.7
       env: PY=3.7
+    - os: linux
+      language: python
+      python: 3.8-dev
+      env: PY=3.8-dev
     - os: osx
       language: generic
       env: PY=3.x
@@ -63,6 +66,14 @@ matrix:
             HOMEBREW_NO_AUTO_UPDATE=1 brew $action python
             python3 -m venv venv
             source venv/bin/activate
+    - os: linux
+      language: python
+      python: 3.7
+      env: TEST=lint
+      script:
+        - tox -e lint
+      after_success:  # don't do uploading, no coverage data needed
+        - echo
 
 install:
   - pip install -U tox codecov
