@@ -13,34 +13,38 @@
 # See the License for the specific language governing permissions and                  #
 # limitations under the License.                                                       #
 ########################################################################################
-"""
-The ``ci_exec`` package top-level namespace.
+"""Tests for the :mod:`ci_exec.parsers.utils` module."""
 
-Quick Reference:
+import platform
 
-.. coresummary::
-"""
+from ci_exec.parsers.utils import env_or_platform_default
+from ci_exec.utils import set_env, unset_env
 
-# Import the core utilities in the ci_exec "namespace" for simpler imports.
-from .colorize import Ansi, Colors, Styles, colorize, log_stage
-from .core import Executable, fail, mkdir_p, rm_rf, which
-from .parsers import CMakeParser
-from .patch import filter_file, unified_diff
-from .provider import Provider
-from .utils import cd, merge_kwargs, set_env, unset_env
 
-__version__ = "0.1.1.dev"
-__all__ = [
-    # Core imports from ci_exec.colorize module.
-    "Ansi", "Colors", "Styles", "colorize", "log_stage",
-    # Core imports from ci_exec.core module.
-    "Executable", "fail", "mkdir_p", "rm_rf", "which",
-    # Core imports from ci_exec.parsers package.
-    "CMakeParser",
-    # Core imports from ci_exec.patch module.
-    "filter_file", "unified_diff",
-    # Core imports from ci_exec.provider module.
-    "Provider",
-    # Core imports from ci_exec.utils module.
-    "cd", "merge_kwargs", "set_env", "unset_env"
-]
+@unset_env("CC")
+def test_env_or_platform_default():
+    """
+    Validate |env_or_platform_default| returns expected values for each platform.
+
+    .. |env_or_platform_default| replace::
+
+        :func:`~ci_exec.parsers.utils.env_or_platform_default`
+    """
+    kwargs = dict(
+        env="CC",
+        windows="cl.exe",
+        darwin="clang",
+        other="gcc"
+    )
+    cc = env_or_platform_default(**kwargs)
+    system = platform.system()
+    if system == "Windows":
+        assert cc == "cl.exe"
+    elif system == "Darwin":
+        assert cc == "clang"
+    else:
+        assert cc == "gcc"
+
+    with set_env(CC="supercompiler"):
+        cc = env_or_platform_default(**kwargs)
+        assert cc == "supercompiler"

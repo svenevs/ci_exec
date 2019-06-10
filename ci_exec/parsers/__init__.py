@@ -14,33 +14,28 @@
 # limitations under the License.                                                       #
 ########################################################################################
 """
-The ``ci_exec`` package top-level namespace.
+:mod:`python:argparse` derivatives tailored to specific build systems.
 
-Quick Reference:
+If you would like to contribute a generic parser for a build system, the pull request
+shall add the following:
 
-.. coresummary::
+1. Add file ``ci_exec/parsers/{build_system}_parser.py`` with the implementation.
+2. Add file ``tests/parsers/{build_system}_parser.py`` with the tests.
+3. Add a top-level import to ``ci_exec/parsers/__init__.py`` (keep alphabetical).
+4. Update the top-level imports for ``parsers`` in ``ci_exec/__init__.py``.
+5. Add ``docs/source/api/parsers/{build_system}.rst`` and update the ``toctree``
+   directive in ``docs/source/api/parsers.rst`` (keep alphabetical).
+
+When contributing a custom parser, please do your best to make it as generic as possible
+to support as wide an audience as is reasonably possible.  If "arbitrary" decisions need
+to be made, please document them clearly and allow them to be overriden.
+
+Lastly, by contributing a build system parser, you agree to being CC'd via a GitHub
+``@`` mention for any issues that may arise with the parser.  In other words, please
+help me maintain the new parser being added 🙂
 """
+from .cmake_parser import CMakeParser
 
-# Import the core utilities in the ci_exec "namespace" for simpler imports.
-from .colorize import Ansi, Colors, Styles, colorize, log_stage
-from .core import Executable, fail, mkdir_p, rm_rf, which
-from .parsers import CMakeParser
-from .patch import filter_file, unified_diff
-from .provider import Provider
-from .utils import cd, merge_kwargs, set_env, unset_env
-
-__version__ = "0.1.1.dev"
 __all__ = [
-    # Core imports from ci_exec.colorize module.
-    "Ansi", "Colors", "Styles", "colorize", "log_stage",
-    # Core imports from ci_exec.core module.
-    "Executable", "fail", "mkdir_p", "rm_rf", "which",
-    # Core imports from ci_exec.parsers package.
-    "CMakeParser",
-    # Core imports from ci_exec.patch module.
-    "filter_file", "unified_diff",
-    # Core imports from ci_exec.provider module.
-    "Provider",
-    # Core imports from ci_exec.utils module.
-    "cd", "merge_kwargs", "set_env", "unset_env"
+    "CMakeParser"
 ]
