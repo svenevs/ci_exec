@@ -6,7 +6,7 @@
 #                                                                                      #
 #     https://bitbucket.org/birkenfeld/sphinx-contrib                                  #
 #                                                                                      #
-# There is an alternative that is sort-of packaged on PyPi as sphinxcontrib.youtube,   #
+# There is an alternative that is sort-of packaged on PyPI as sphinxcontrib.youtube,   #
 # but it doesn't work so I decided to just adapt the original for my needs.            #
 ########################################################################################
 # If not otherwise noted, the extensions in this package are licensed                  #

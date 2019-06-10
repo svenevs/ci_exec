@@ -91,16 +91,16 @@ Installation
 
 .. begin_install
 
-``ci_exec`` is `available on PyPi <https://pypi.org/project/ci-exec/>`_.  It can be
-installed using your favorite python package manager:
+``ci_exec`` is `available on PyPI <https://pypi.org/project/ci-exec/>`_.  It can be
+installed using your python package manager of choice:
 
 .. code-block:: console
 
     $ pip install ci-exec
 
-.. tip::
+.. note::
 
-    The PyPi package has a ``-``: ``ci-exec``, not ``ci_exec``.
+    The PyPI package has a ``-``: ``ci-exec``, not ``ci_exec``.
 
 There is also a ``setup.py`` here, so you can also install it from source:
 

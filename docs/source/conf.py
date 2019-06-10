@@ -11,6 +11,7 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+import datetime
 import os
 import sys
 from types import FunctionType
@@ -34,9 +35,10 @@ from youtube import Youtube, YoutubeDirective, depart_youtube_node, visit_youtub
 
 
 # -- Project information ---------------------------------------------------------------
+year = datetime.datetime.now().year
 project = "ci_exec"
-copyright = "2019, Stephen McDowell"
 author = "Stephen McDowell"
+copyright = "{year}, {author}".format(year=year, author=author)
 
 # The full version, including alpha/beta/rc tags
 release = ci_exec.__version__
@@ -77,6 +79,8 @@ html_static_path = ["_static"]
 
 
 # -- Extension setup -------------------------------------------------------------------
+add_module_names = False
+autodoc_typehints = "none"
 autodoc_member_order = "bysource"
 
 intersphinx_mapping = {
@@ -214,64 +218,7 @@ class CoreSummary(Autosummary):
         return super().get_table(desired_items)
 
 
-def monkey_patch_autodoc():  # noqa D100
-    # https://github.com/sphinx-doc/sphinx/issues/6361
-    # Adding temporary monkey patch solution until we discuss how to properly fix.
-    # This code is directly from
-    # https://github.com/sphinx-doc/sphinx/blob/165897a74951fb03e497d6e05496ce02e897f820/sphinx/ext/autodoc/__init__.py#L406-L408
-    def format_signature(self):  # noqa D100
-        if self.args is not None:
-            # signature given explicitly
-            args = "(%s)" % self.args
-        else:
-            # try to introspect the signature
-            try:
-                args = self.format_args()
-            except Exception as err:
-                logger.warning(__('error while formatting arguments for %s: %s') %  # noqa
-                                (self.fullname, err), type='autodoc')  # noqa
-                args = None
-
-        retann = self.retann
-
-        ################################################################################
-        # See: https://github.com/sphinx-doc/sphinx/issues/6361                        #
-        result = self.env.events.emit_firstresult('autodoc-process-signature',         #
-                                                  self.objtype, self.fullname,         #
-                                                  self.object, self.options, args,     #
-                                                  retann, self)                        #
-        ################################################################################
-        if result:
-            args, retann = result
-
-        if args is not None:
-            return args + (retann and (' -> %s' % retann) or '')
-        else:
-            return ''
-
-    from sphinx.ext.autodoc import Documenter
-    Documenter.format_signature = format_signature
-
-
-def autodoc_process_signature(app, what, name, obj, options, signature,
-                              return_annotation, documenter):
-    """
-    Remove type hints from all signatures for improved readability.
-
-    - See `autodoc-process-signature event`__
-    - See https://github.com/sphinx-doc/sphinx/issues/6361
-
-    __ http://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html#event-autodoc-process-signature
-    """  # noqa E501
-    try:
-        return documenter.format_args(show_annotation=False), return_annotation
-    except:  # noqa E722
-        return None
-
-
 def setup(app):  # noqa: D103
-    monkey_patch_autodoc()
-
     app.add_css_file("custom.css")
     app.add_directive("dlistsummary", DefinitionListSummary)
     app.add_directive("availableproviders", ProviderSummary)
@@ -279,5 +226,3 @@ def setup(app):  # noqa: D103
 
     app.add_node(Youtube, html=(visit_youtube_node, depart_youtube_node))
     app.add_directive("youtube", YoutubeDirective)
-
-    app.connect("autodoc-process-signature", autodoc_process_signature)
