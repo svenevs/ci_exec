@@ -267,14 +267,14 @@ def test_set_env():
     """Validate |set_env| sets environment variables."""
     with pytest.raises(ValueError) as exc_info:
         @set_env()
-        def no_arguments_bad():
-            pass  # pragma: no cover
+        def no_arguments_bad():  # pragma: no cover
+            pass                 # pragma: no cover
     assert str(exc_info.value) == "set_env: at least one argument required."
 
     with pytest.raises(ValueError) as exc_info:
         @set_env(KEY=12)
-        def integer_value_bad():
-            pass  # pragma: no cover
+        def integer_value_bad():  # pragma: no cover
+            pass                  # pragma: no cover
     assert str(exc_info.value) == "set_env: all keys and values must be strings."
 
     # The actual environment setting test.
