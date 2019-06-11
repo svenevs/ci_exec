@@ -381,20 +381,20 @@ def test_unset_env():
     """Validate |unset_env| unsets environment variables."""
     with pytest.raises(ValueError) as exc_info:
         @unset_env()
-        def no_arguments_bad():
-            pass  # pragma: no cover
+        def no_arguments_bad():  # pragma: no cover
+            pass                 # pragma: no cover
     assert str(exc_info.value) == "unset_env: at least one argument required."
 
     with pytest.raises(ValueError) as exc_info:
         @unset_env(12)
-        def integer_arg_bad():
-            pass  # pragma: no cover
+        def integer_arg_bad():  # pragma: no cover
+            pass                # pragma: no cover
     assert str(exc_info.value) == "unset_env: all arguments must be strings."
 
     with pytest.raises(ValueError) as exc_info:
         @unset_env("KEY", 12, "ANOTHER_KEY")
-        def integer_arg_still_bad():
-            pass  # pragma: no cover
+        def integer_arg_still_bad():  # pragma: no cover
+            pass                      # pragma: no cover
     assert str(exc_info.value) == "unset_env: all arguments must be strings."
 
     # The actual environment setting test.
