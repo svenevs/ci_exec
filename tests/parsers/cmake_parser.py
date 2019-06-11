@@ -386,6 +386,61 @@ def test_cmake_parser_extra_args():
 
 
 @unset_env("CC", "CXX")
+def test_cmake_parser_shared_or_static(capsys):
+    """Validate ``--shared`` and ``--static`` |CMakeParser| options."""
+    def validate_shared_and_or_static(parser: CMakeParser):
+        """Verify -DBUILD_SHARED_LIBS is correct with --shared vs --static."""
+        # Specifying --shared: -DBUILD_SHARED_LIBS=ON
+        args = parser.parse_args(["--shared"])
+        assert args.shared
+        assert not args.static
+        assert "-DBUILD_SHARED_LIBS=ON" in args.cmake_configure_args
+
+        # Specifying --shared: -DBUILD_SHARED_LIBS=OFF
+        args = parser.parse_args(["--static"])
+        assert args.static
+        assert not args.shared
+        assert "-DBUILD_SHARED_LIBS=OFF" in args.cmake_configure_args
+
+        # Specifying both: error
+        with pytest.raises(SystemExit) as se_excinfo:
+            args = parser.parse_args(["--shared", "--static"])
+        assert se_excinfo.value.code == 2
+        captured = capsys.readouterr()
+        assert captured.out == ""
+        assert "argument --static: not allowed with argument --shared" in captured.err
+
+        with pytest.raises(SystemExit) as se_excinfo:
+            args = parser.parse_args(["--static", "--shared"])
+        assert se_excinfo.value.code == 2
+        captured = capsys.readouterr()
+        assert captured.out == ""
+        assert "argument --shared: not allowed with argument --static" in captured.err
+
+    # Default: if neither --shared nor --static specified, NO -DBUILD_SHARED_LIBS.
+    optional_parser = CMakeParser()
+    args = optional_parser.parse_args([])
+    assert not args.shared
+    assert not args.static
+    assert not any(
+        conf.startswith("-DBUILD_SHARED_LIBS") for conf in args.cmake_configure_args
+    )
+
+    validate_shared_and_or_static(optional_parser)
+
+    # At least one of `--shared` or `--static` must be provided.
+    required_parser = CMakeParser(shared_or_static_required=True)
+    with pytest.raises(SystemExit) as se_excinfo:
+        args = required_parser.parse_args([])
+    assert se_excinfo.value.code == 2
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert "one of the arguments --shared --static is required" in captured.err
+
+    validate_shared_and_or_static(required_parser)
+
+
+@unset_env("CC", "CXX")
 def test_cmake_parser_parse_args_cmake_configure_args():
     """
     Validate |parse_args| works as expected.

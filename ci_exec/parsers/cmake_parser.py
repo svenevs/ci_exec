@@ -99,9 +99,13 @@ class CMakeParser(argparse.ArgumentParser):
         Add ``-DBUILD_SHARED_LIBS=ON`` to configure arguments?  Conflicts with
         ``--static`` flag.
 
+        See also: ``shared_or_static_required`` constructor parameter.
+
     ``--static`` (``args.static``) -- default: ``False``
         Add ``-DBUILD_SHARED_LIBS=OFF`` to configure arguments?  Conflicts with
         ``--shared`` flag.
+
+        See also: ``shared_or_static_required`` constructor parameter.
 
     ``--cc`` (``args.cc``) -- default: *platform dependent*
         The C compiler to use.  If the generator requested is a single-config generator,
@@ -188,10 +192,34 @@ class CMakeParser(argparse.ArgumentParser):
         Default: ``True``, support ``[extra_args]`` CMake configure arguments at the end
         of the command-line, after the ``--`` sequence (see above).
 
+    shared_or_static_required : bool
+        Default: ``False``.  The ``--shared`` and ``--static`` flags are added using
+        :meth:`~python:argparse.ArgumentParser.add_mutually_exclusive_group`, this is
+        a pass-through parameter::
+
+            shared_or_static = self.add_mutually_exclusive_group(
+                required=shared_or_static_required
+            )
+
+        - When ``False``, if neither ``--shared`` nor ``--static`` are supplied, then
+          ``args.cmake_configure_args`` will **not** contain any
+          ``-DBUILD_SHARED_LIBS=[val]`` entries.
+        - When ``True``, one of ``--shared`` or ``--static`` must be provided, meaning
+          that ``args.cmake_configure_args`` will **always** contain either
+          ``-DBUILD_SHARED_LIBS=ON`` or ``-DBUILD_SHARED_LIBS=OFF``.
+
+        Typically CMake projects will
+        ``option(BUILD_SHARED_LIBS "Build shared libraries?" OFF)``, meaning that if
+        not specified ``--static`` is implied.  This is because the default behavior
+        of ``add_library`` with no explicit ``SHARED|STATIC`` is ``STATIC``.  However,
+        if a project defaults ``BUILD_SHARED_LIBS`` to ``ON``, requiring ``--shared``
+        or ``--static`` be explicitly provided can help ensure that dependencies etc
+        will all receive the same ``BUILD_SHARED_LIBS`` arguments.
+
     **kwargs
         All other parameters are forwarded to :class:`python:argparse.ArgumentParser`.
-        Note that by adding the ``add_extra_args`` keyword only argument, all argparse
-        arguments become keyword only arguments as well (positional arguments disabled).
+        Note that every parameter to the |CMakeParser| class must be specified as a
+        keyword-only argument.  Positional arguments are disabled.
 
     Attributes
     ----------
@@ -265,7 +293,8 @@ class CMakeParser(argparse.ArgumentParser):
         """Whether or not string ``generator`` is a single-config generator."""
         return generator in (cls.makefile_generators | cls.ninja_generator)
 
-    def __init__(self, *, add_extra_args: bool = True, **kwargs):
+    def __init__(self, *, add_extra_args: bool = True,
+                 shared_or_static_required: bool = False, **kwargs):
         if "formatter_class" not in kwargs:
             kwargs["formatter_class"] = argparse.ArgumentDefaultsHelpFormatter
         self.add_extra_args = add_extra_args  # see parse_args
@@ -304,7 +333,9 @@ class CMakeParser(argparse.ArgumentParser):
         )
 
         # BUILD_SHARED_LIBS.  Only populated if explicitly requested.
-        shared_or_static = self.add_mutually_exclusive_group()
+        shared_or_static = self.add_mutually_exclusive_group(
+            required=shared_or_static_required
+        )
 
         shared = shared_or_static.add_argument(
             "--shared", dest="shared", action="store_true",
