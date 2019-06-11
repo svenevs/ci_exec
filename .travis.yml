@@ -9,7 +9,10 @@ branches:
 matrix:
   include:
     - os: linux
-      language: generic
+      # NOTE: by using `python`, we automatically get put in a virtual environment.
+      #       (relevant for after_success here).
+      language: python
+      python: 3.7
       services:
         - docker
       before_install:
