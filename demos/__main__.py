@@ -223,9 +223,9 @@ def mock_shell(program: str, *, cwd: str, delay: float, animated: bool):
                 elif exe_name in {"python", "python3"}:
                     # Use `coverage run` rather than python to get coverage of demo.
                     if "-c" not in cmd_line and CI_EXEC_DEMOS_COVERAGE:
-                        # Create: `coverage` [run, -a, ... other args ...]
+                        # Create: `coverage` [run, -p, ... other args ...]
                         exe_name = "coverage"
-                        cmd_line.insert(0, "-a")  # append
+                        cmd_line.insert(0, "-p")  # parallel
                         cmd_line.insert(0, "run")
                     else:
                         exe_name = sys.executable
