@@ -258,8 +258,8 @@ class CMakeParser(argparse.ArgumentParser):
     """
     The `Ninja Generator`__.
 
-    __ https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html#ninja-generator
-    """  # noqa: E501
+    __ https://cmake.org/cmake/help/latest/generator/Ninja.html
+    """
 
     visual_studio_generators = {
         "Visual Studio 9 2008",
