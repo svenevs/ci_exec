@@ -220,6 +220,24 @@ class Provider(object, metaclass=ProviderMeta):
         return os.getenv("CIRCLECI", "false").lower() == "true"
 
     @provider
+    def is_github_actions() -> bool:
+        """
+        Whether or not the code is executing on `GitHub Actions`_.
+
+        `Environment variables considered <github_actions_env_>`_:
+
+        +----------------------+-----------------------------------+
+        | Environment Variable | Environment Value                 |
+        +======================+===================================+
+        | ``GITHUB_RUN_ID``    | Existence checked, value ignored. |
+        +----------------------+-----------------------------------+
+
+        .. _GitHub Actions: https://github.com/features/actions
+        .. _github_actions_env: https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables#default-environment-variables
+        """  # noqa: E501
+        return os.getenv("GITHUB_RUN_ID", None) is not None
+
+    @provider
     def is_jenkins() -> bool:
         """
         Whether or not the code is executing on `Jenkins`_.
