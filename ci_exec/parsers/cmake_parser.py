@@ -258,8 +258,8 @@ class CMakeParser(argparse.ArgumentParser):
     """
     The `Ninja Generator`__.
 
-    __ https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html#ninja-generator
-    """  # noqa: E501
+    __ https://cmake.org/cmake/help/latest/generator/Ninja.html
+    """
 
     visual_studio_generators = {
         "Visual Studio 9 2008",
@@ -620,7 +620,7 @@ class CMakeParser(argparse.ArgumentParser):
                 # Only ok because we only support removing optional arguments, not
                 # positional arguments.
                 self._handle_conflict_resolve(  # type: ignore
-                    None, [(found_arg.option_strings[0], found_arg)]
+                    found_arg, [(found_arg.option_strings[0], found_arg)]
                 )
             else:
                 missing.append(item)

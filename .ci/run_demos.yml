@@ -23,6 +23,9 @@ steps:
   - script: |
       tox -e demos -- custom_log_stage --animate
       coverage run -a demos/ --help
+      # Coverage `run -p` creates .coverage.*** files for different processes.
+      # Combine them back into one file.
+      coverage combine -a .
       coverage xml -o coverage.xml
     displayName: Demos Full Coverage (IGNORE)
   - script: |

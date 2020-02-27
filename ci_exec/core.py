@@ -27,7 +27,7 @@ from typing import Optional, Union
 try:
     from typing import NoReturn
 except ImportError:
-    NoReturn = None
+    NoReturn = None  # type: ignore
 
 from .colorize import Colors, Styles, colorize
 

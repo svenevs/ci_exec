@@ -19,4 +19,9 @@ steps:
   - script: |
       codecov --required -X gcov -f coverage.xml --name "[AzP] ${{ parameters.image_short }}-${{ parameters.py_version }}" -t $(CODECOV_TOKEN)
     displayName: Upload Code Coverage for ${{ parameters.py_version }}
-    condition: succeeded()
+    # Skip uploading coverage for cron jobs, their coverage was already uploaded.  The
+    # coverage data would be incomplete if we don't also schedule Travis at the same time...
+    # See also:
+    #   - https://docs.microsoft.com/en-us/azure/devops/pipelines/process/conditions?view=azure-devops&tabs=yaml
+    #   - https://docs.microsoft.com/en-us/azure/devops/pipelines/build/variables?view=azure-devops&tabs=yaml
+    condition: and(succeeded(), in(variables['Build.Reason'], 'IndividualCI', 'BatchedCI', 'PullRequest'))

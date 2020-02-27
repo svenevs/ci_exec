@@ -11,13 +11,23 @@ pr:
     include:
       - master
 
+# Build roughly every other week.
+# https://crontab.guru/#41_1_1,14_*_*
+schedules:
+  - cron: "41 1 1,14 * *"
+    displayName: Cronomatic Bifurcated Build
+    branches:
+      include:
+        - master
+    always: true
+
 jobs:
   ######################################################################################
   # Linux :: Python :: 3.5, 3.6, 3.7                                                   #
   ######################################################################################
   - job: Linux_Python
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: 'ubuntu-latest'
     steps:
       - template: .ci/test_python_and_upload.yml
         parameters:
@@ -36,7 +46,7 @@ jobs:
   ######################################################################################
   - job: macOS_Python
     pool:
-      vmImage: 'macos-10.13'
+      vmImage: 'macos-latest'
     steps:
       - template: .ci/test_python_and_upload.yml
         parameters:
@@ -55,7 +65,7 @@ jobs:
   ######################################################################################
   - job: Win64_Python
     pool:
-      vmImage: 'vs2017-win2016'
+      vmImage: 'windows-latest'
     steps:
       - template: .ci/test_python_and_upload.yml
         parameters:
@@ -74,7 +84,7 @@ jobs:
   ######################################################################################
   - job: Linux_Demos
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: 'ubuntu-latest'
     steps:
       - template: .ci/run_demos.yml
         parameters:
@@ -84,7 +94,7 @@ jobs:
   ######################################################################################
   - job: macOS_Demos
     pool:
-      vmImage: 'macos-10.13'
+      vmImage: 'macos-latest'
     steps:
       - template: .ci/run_demos.yml
         parameters:
@@ -94,7 +104,7 @@ jobs:
   ######################################################################################
   - job: Win64_Demos
     pool:
-      vmImage: 'vs2017-win2016'
+      vmImage: 'windows-latest'
     steps:
       - template: .ci/run_demos.yml
         parameters:
@@ -104,7 +114,7 @@ jobs:
   ######################################################################################
   - job: Docs_Linkcheck
     pool:
-      vmImage: 'ubuntu-16.04'
+      vmImage: 'ubuntu-latest'
     steps:
       - task: UsePythonVersion@0
         inputs:
