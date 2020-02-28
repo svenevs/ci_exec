@@ -26,6 +26,8 @@ _specific_providers = [
     "AZURE_HTTP_USER_AGENT", "AGENT_NAME", "BUILD_REASON",
     # is_circle_ci  ####################################################################
     "CIRCLECI",
+    # is_github_actions ################################################################
+    "GITHUB_RUN_ID",
     # is_jenkins  ######################################################################
     "JENKINS_URL", "BUILD_NUMBER",
     # is_travis  #######################################################################
@@ -127,6 +129,23 @@ def test_provider_is_circle_ci():
     with set_env(CIRCLECI="true"):
         assert Provider.is_ci()
         assert Provider.is_circle_ci()
+        assert provider_sum() == 1
+
+
+@unset_env(*_all_providers)
+def test_provider_is_github_actions():
+    """
+    Validate |is_github_actions| reports as expected.
+
+    .. |is_github_actions| replace::
+
+        :func:`Provider.is_github_actions <ci_exec.provider.Provider.is_github_actions>`
+    """
+    assert not Provider.is_ci()
+    assert not Provider.is_github_actions()
+    with set_env(GITHUB_RUN_ID="123456789"):
+        assert Provider.is_ci()
+        assert Provider.is_github_actions()
         assert provider_sum() == 1
 
 
