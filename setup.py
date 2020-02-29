@@ -76,7 +76,9 @@ setup(
         "docs", "docs.*",
         "tests", "tests.*",
     ]),
-    zip_safe=True,
+    package_data={"ci_exec": ["py.typed"]},
+    include_package_data=True,
+    zip_safe=False,
     python_requires=">=3.5",
     classifiers=[
         "Development Status :: 3 - Alpha",
