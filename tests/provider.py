@@ -27,7 +27,7 @@ _specific_providers = [
     # is_circle_ci  ####################################################################
     "CIRCLECI",
     # is_github_actions ################################################################
-    "GITHUB_RUN_ID",
+    "GITHUB_ACTIONS",
     # is_jenkins  ######################################################################
     "JENKINS_URL", "BUILD_NUMBER",
     # is_travis  #######################################################################
@@ -143,7 +143,7 @@ def test_provider_is_github_actions():
     """
     assert not Provider.is_ci()
     assert not Provider.is_github_actions()
-    with set_env(GITHUB_RUN_ID="123456789"):
+    with set_env(GITHUB_ACTIONS="true"):
         assert Provider.is_ci()
         assert Provider.is_github_actions()
         assert provider_sum() == 1
