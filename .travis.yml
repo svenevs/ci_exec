@@ -13,12 +13,12 @@ branches:
 
 matrix:
   include:
-    - python: 3.9
+    - language: generic
       services:
         - docker
       before_install:
         - docker pull python:3.5.0
-        - docker run -it --name py350 python:3.5.0 /bin/sh
+        - docker run -d --entrypoint /bin/sh --name py350 python:3.5.0
         - docker cp . py350:/data
       install:
         - docker exec py350 pip install -U pip
