@@ -13,26 +13,26 @@ branches:
 
 matrix:
   include:
-    - language: generic
-      arch: amd64
-      services:
-        - docker
-      before_install:
-        - docker pull python:3.5.0
-        - docker run -itd --entrypoint /bin/sh --name py350 python:3.5.0
-        - docker ps -a
-        - docker cp . py350:/data
-      install:
-        - docker exec -d py350 pip install -U pip
-        - docker exec -d py350 pip install tox
-      script:
-        - docker exec -d --workdir /data py350 tox -e py -- --cov-report xml:coverage.xml --cov
-        - docker cp py350:/data/coverage.xml .
-        - docker stop py350
-      after_success:
-        - pip install codecov
-        - codecov --required -X gcov -f coverage.xml --name "[Travis] docker-py3.5.0"
-      env: PY=3.5.0
+    # - language: generic
+    #   arch: amd64
+    #   services:
+    #     - docker
+    #   before_install:
+    #     - docker pull python:3.5.0
+    #     - docker run -itd --entrypoint /bin/sh --name py350 python:3.5.0
+    #     - docker ps -a
+    #     - docker cp . py350:/data
+    #   install:
+    #     - docker exec -d py350 pip install -U pip
+    #     - docker exec -d py350 pip install tox
+    #   script:
+    #     - docker exec -d --workdir /data py350 tox -e py -- --cov-report xml:coverage.xml --cov
+    #     - docker cp py350:/data/coverage.xml .
+    #     - docker stop py350
+    #   after_success:
+    #     - pip install codecov
+    #     - codecov --required -X gcov -f coverage.xml --name "[Travis] docker-py3.5.0"
+    #   env: PY=3.5.0
       # NOTE: using language: generic on xenial to specifically get 3.5.2, which
       # does not have NoReturn in typing.  Acquiring 3.5.0 on Ubuntu is
       # challenging even to build from source due to OpenSSL ABI changes.
@@ -47,6 +47,7 @@ matrix:
       before_install:
         - python3 -m venv venv
         - source venv/bin/activate
+        - pip install -U pip
       env: PY=3.5
     - python: 3.6
       env: PY=3.6
