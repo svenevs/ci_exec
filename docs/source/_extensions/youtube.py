@@ -44,7 +44,7 @@ import textwrap
 
 from docutils import nodes
 from docutils.parsers.rst import Directive
-from docutils.parsers.rst.directives import positive_int
+from docutils.parsers.rst.directives import positive_int  # type: ignore
 
 
 class Youtube(nodes.General, nodes.Element):
