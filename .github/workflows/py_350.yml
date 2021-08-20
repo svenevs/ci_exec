@@ -1,4 +1,4 @@
-name: Test Python
+name: Docker Python 3.5.0
 on:
   push:
     branches:
@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: docker://python:3.5.0
-      entrypoint: /bin/sh
+      options: --entrypoint /bin/sh
     steps:
       - uses: actions/checkout@v2
       - name: Install Dependencies
