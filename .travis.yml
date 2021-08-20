@@ -18,7 +18,7 @@ matrix:
         - docker
       before_install:
         - docker pull python:3.5.0
-        - docker run -d --entrypoint /bin/sh --name py350 python:3.5.0
+        - docker run -td --entrypoint /bin/sh --name py350 python:3.5.0
         - docker ps -a
         - docker cp . py350:/data
       install:
