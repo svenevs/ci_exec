@@ -13,22 +13,6 @@ branches:
 
 matrix:
   include:
-      # NOTE: using language: generic on xenial to specifically get 3.5.2, which
-      # does not have NoReturn in typing.  Acquiring 3.5.0 on Ubuntu is
-      # challenging even to build from source due to OpenSSL ABI changes.
-    - language: generic
-      dist: xenial
-      addons:
-        apt:
-          packages:
-            - python3.5
-            - python3.5-dev
-            - python3.5-venv
-      before_install:
-        - python3 -m venv venv
-        - source venv/bin/activate
-        - pip install -U pip
-      env: PY=3.5
     - python: 3.6
       env: PY=3.6
     - python: 3.7
