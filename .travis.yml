@@ -7,9 +7,9 @@ virt: lxd
 language: python
 
 # Only build master branch, other branches will have a Pull Request build.
-branches:
-  only:
-    - master
+# branches:
+#   only:
+#     - master
 
 matrix:
   include:
