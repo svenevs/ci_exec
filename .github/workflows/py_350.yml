@@ -1,0 +1,28 @@
+name: Test Python
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: docker://python:3.5.0
+      entrypoint: /bin/sh
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: |
+          pip install -U pip
+          pip install tox
+      - name: Run Tests for 3.5.0
+        run: |
+          python --version
+          tox -e py -- --cov-report xml:coverage.xml --cov
+      - name: Upload Code Coverage for 3.5.0
+        run: |
+          codecov --required -X gcov -f coverage.xml --name "[GHA] Linux-3.5.0"
