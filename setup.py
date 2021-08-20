@@ -5,8 +5,8 @@ import sys
 from setuptools import find_packages, setup
 
 
-if sys.version_info < (3, 5):
-    raise RuntimeError("ci_exec needs Python 3.5+")
+if sys.version_info < (3, 6):
+    raise RuntimeError("ci_exec needs Python 3.6+")
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import ci_exec  # noqa: E402, I100
@@ -59,7 +59,7 @@ long_description = long.rstrip()
 setup(
     name="ci_exec",
     version=ci_exec.__version__,
-    requires_python=">=3.5",
+    requires_python=">=3.6",
     author="Stephen McDowell",
     author_email="svenevs.pypi@gmail.com",
     license="Apache v2.0",
@@ -79,15 +79,15 @@ setup(
     package_data={"ci_exec": ["py.typed"]},
     include_package_data=True,
     zip_safe=False,
-    python_requires=">=3.5",
+    python_requires=">=3.6",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
         "Topic :: Software Development :: Build Tools",
         "License :: OSI Approved :: Apache Software License",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8"
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9"
     ]
 )
