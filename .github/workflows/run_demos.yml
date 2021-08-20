@@ -1,0 +1,46 @@
+name: Run Demos
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install Dependencies
+        run: |
+          pip install -U tox codecov coverage
+      ##################################################################################
+      # Each new demo: add new script: here, and in Demos Full Coverage below.         #
+      ##################################################################################
+      - name: Demo custom_log_stage
+        run: |
+          tox -q -e demos -- custom_log_stage
+      ##################################################################################
+      # Run the demos with the --animate flag to complete coverage analysis.  The
+      # console clearing may produce some odd artifacts in the logs online (`[H` shows
+      # up), aka IGNORE the output here ;).  Then run some extras / generate
+      # coverage.xml report.
+      - name: Demos Full Coverage (IGNORE)
+        run: |
+          tox -e demos -- custom_log_stage --animate
+          coverage run -a demos/ --help
+          # Coverage `run -p` creates .coverage.*** files for different processes.
+          # Combine them back into one file.
+          coverage combine -a .
+          coverage xml -o coverage.xml
+      - name: Upload Code Coverage for Demos
+        run: |
+          codecov --required -X gcov -f coverage.xml --name "[GHA] Linux ${{ matrix.python-version }}-Demos"

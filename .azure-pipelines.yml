@@ -23,7 +23,7 @@ schedules:
 
 jobs:
   ######################################################################################
-  # Linux :: Python :: 3.5, 3.6, 3.7                                                   #
+  # Linux :: Python :: 3.6, 3.7, 3.8, 3.9                                              #
   ######################################################################################
   - job: Linux_Python
     pool:
@@ -31,18 +31,22 @@ jobs:
     steps:
       - template: .ci/test_python_and_upload.yml
         parameters:
-          py_version: 3.5
-          image_short: Linux
-      - template: .ci/test_python_and_upload.yml
-        parameters:
           py_version: 3.6
           image_short: Linux
       - template: .ci/test_python_and_upload.yml
         parameters:
           py_version: 3.7
           image_short: Linux
+      - template: .ci/test_python_and_upload.yml
+        parameters:
+          py_version: 3.8
+          image_short: Linux
+      - template: .ci/test_python_and_upload.yml
+        parameters:
+          py_version: 3.9
+          image_short: Linux
   ######################################################################################
-  # macOS :: Python :: 3.5, 3.6, 3.7                                                   #
+  # macOS :: Python :: 3.6, 3.7, 3.8, 3.9                                              #
   ######################################################################################
   - job: macOS_Python
     pool:
@@ -50,18 +54,22 @@ jobs:
     steps:
       - template: .ci/test_python_and_upload.yml
         parameters:
-          py_version: 3.5
-          image_short: macOS
-      - template: .ci/test_python_and_upload.yml
-        parameters:
           py_version: 3.6
           image_short: macOS
       - template: .ci/test_python_and_upload.yml
         parameters:
           py_version: 3.7
           image_short: macOS
+      - template: .ci/test_python_and_upload.yml
+        parameters:
+          py_version: 3.8
+          image_short: macOS
+      - template: .ci/test_python_and_upload.yml
+        parameters:
+          py_version: 3.9
+          image_short: macOS
   ######################################################################################
-  # Win64 :: Python :: 3.5, 3.6, 3.7                                                   #
+  # Win64 :: Python :: 3.6, 3.7, 3.8, 3.9                                              #
   ######################################################################################
   - job: Win64_Python
     pool:
@@ -69,15 +77,19 @@ jobs:
     steps:
       - template: .ci/test_python_and_upload.yml
         parameters:
-          py_version: 3.5
-          image_short: Win64
-      - template: .ci/test_python_and_upload.yml
-        parameters:
           py_version: 3.6
           image_short: Win64
       - template: .ci/test_python_and_upload.yml
         parameters:
           py_version: 3.7
+          image_short: Win64
+      - template: .ci/test_python_and_upload.yml
+        parameters:
+          py_version: 3.8
+          image_short: Win64
+      - template: .ci/test_python_and_upload.yml
+        parameters:
+          py_version: 3.9
           image_short: Win64
   ######################################################################################
   # Linux :: Demos                                                                     #

@@ -1,5 +1,10 @@
 sudo: false
-dist: xenial
+os: linux
+dist: focal
+group: edge
+arch: arm64-graviton2
+virt: lxd
+language: python
 
 # Only build master branch, other branches will have a Pull Request build.
 branches:
@@ -8,71 +13,17 @@ branches:
 
 matrix:
   include:
-    - os: linux
-      # NOTE: by using `python`, we automatically get put in a virtual environment.
-      #       (relevant for after_success here).
-      language: python
-      python: 3.7
-      services:
-        - docker
-      before_install:
-        - docker pull python:3.5.0
-        - docker run -itd --name py350 python:3.5.0 /bin/sh
-        - docker cp . py350:/data
-      install:
-        - docker exec py350 pip install -U pip
-        - docker exec py350 pip install tox
-      script:
-        - docker exec --workdir /data py350 tox -e py -- --cov-report xml:coverage.xml --cov
-        - docker cp py350:/data/coverage.xml .
-        - docker stop py350
-      after_success:
-        - pip install codecov
-        - codecov --required -X gcov -f coverage.xml --name "[Travis] docker-py3.5.0"
-      env: PY=3.5.0
-    - os: linux
-      # NOTE: using language: generic on xenial to specifically get 3.5.2, which
-      # does not have NoReturn in typing.  Acquiring 3.5.0 on Ubuntu is
-      # challenging even to build from source due to OpenSSL ABI changes.
-      language: generic
-      addons:
-        apt:
-          packages:
-            - python3.5
-            - python3.5-dev
-            - python3.5-venv
-      before_install:
-        - python3 -m venv venv
-        - source venv/bin/activate
-      env: PY=3.5
-    - os: linux
-      language: python
-      python: 3.6
+    - python: 3.6
       env: PY=3.6
-    - os: linux
-      language: python
-      python: 3.7
+    - python: 3.7
       env: PY=3.7
+    - python: 3.8
+      env: PY=3.8
+    - python: 3.9
+      env: PY=3.9
     - os: linux
       language: python
-      python: 3.8-dev
-      env: PY=3.8-dev
-    - os: osx
-      language: generic
-      env: PY=3.x
-      before_install:
-        - |
-            if brew ls --versions python >/dev/null 2>&1; then
-                action="upgrade"
-            else
-                action="install"
-            fi
-            HOMEBREW_NO_AUTO_UPDATE=1 brew $action python
-            python3 -m venv venv
-            source venv/bin/activate
-    - os: linux
-      language: python
-      python: 3.7
+      python: 3.9
       env: TEST=lint
       script:
         - tox -e lint
