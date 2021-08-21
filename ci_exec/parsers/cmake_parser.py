@@ -268,8 +268,7 @@ class CMakeParser(argparse.ArgumentParser):
         "Visual Studio 12 2013",
         "Visual Studio 14 2015",
         "Visual Studio 15 2017",
-        "Visual Studio 16 2019",
-        "Visual Studio 17 2022"
+        "Visual Studio 16 2019"
     }
     """
     The `Visual Studio Generators`__.
