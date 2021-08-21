@@ -100,22 +100,18 @@ class cd(ContextDecorator):  # noqa: N801
             if self.create:
                 mkdir_p(self.dest)  # May fail, if cannot create we want failure.
             else:
-                fail("cd: '{dest}' is not a directory, but create=False.".format(
-                    dest=str(self.dest)
-                ))
+                fail(f"cd: '{str(self.dest)}' is not a directory, but create=False.")
         # Now that we are running, stash the current working directory at the time
         # this context is being created.
         try:
             self.return_dest = Path.cwd()
         except Exception as e:
-            fail("cd: could not get current working directory: {e}".format(e=e))
+            fail(f"cd: could not get current working directory: {e}")
         # At long last, actually change to the directory.
         try:
             os.chdir(str(self.dest))
         except Exception as e:
-            fail("cd: could not change directories to '{dest}': {e}".format(
-                dest=str(self.dest), e=e
-            ))
+            fail(f"cd: could not change directories to '{str(self.dest)}': {e}")
 
         return self
 
@@ -123,9 +119,7 @@ class cd(ContextDecorator):  # noqa: N801
         try:
             os.chdir(str(self.return_dest))
         except Exception as e:
-            fail("cd: could not return to {return_dest}: {e}".format(
-                return_dest=self.return_dest, e=e
-            ))
+            fail(f"cd: could not return to {self.return_dest}: {e}")
 
 
 def merge_kwargs(defaults: dict, kwargs: dict):

@@ -38,7 +38,7 @@ from youtube import Youtube, YoutubeDirective, depart_youtube_node, visit_youtub
 year = datetime.datetime.now().year
 project = "ci_exec"
 author = "Stephen McDowell"
-copyright = "{year}, {author}".format(year=year, author=author)
+copyright = f"{year}, {author}"
 
 # The full version, including alpha/beta/rc tags
 release = ci_exec.__version__
@@ -99,7 +99,7 @@ def get_all_top_level():
     top_level = []
     for item in ci_exec.__all__:
         module = getattr(ci_exec, item).__module__
-        full_item = "{module}.{item}".format(module=module, item=item)
+        full_item = f"{module}.{item}"
         top_level.append(full_item)
 
     return top_level
@@ -112,12 +112,10 @@ def top_level_replacements():
     for full in top_level:
         base = full.split(".")[-1]
         if isinstance(getattr(ci_exec, base), FunctionType):
-            short = "{base}()".format(base=base)
+            short = f"{base}()"
         else:
             short = base
-        repl = ".. |{base}| replace:: :any:`{short} <{full}>`".format(
-            base=base, short=short, full=full
-        )
+        repl = f".. |{base}| replace:: :any:`{short} <{full}>`"
         all_repl.append(repl)
     return all_repl
 
@@ -134,7 +132,7 @@ class DefinitionListSummary(Autosummary):
         # See original implementation:
         # https://github.com/sphinx-doc/sphinx/blob/master/sphinx/ext/autosummary/__init__.py
         source, line = self.state_machine.get_source_and_line()
-        src = "{source}:{line}:<dlistsummary>".format(source=source, line=line)
+        src = f"{source}:{line}:<dlistsummary>"
 
         # We're going to build out a StringList by formatting a definition list and then
         # parsing it at the end.  Definition list syntax:
@@ -146,13 +144,11 @@ class DefinitionListSummary(Autosummary):
         s_list = StringList()
         for name, signature, summary_string, real_name in items:
             # Add the definition item.
-            s_list.append("**{name}**\n".format(name=name), src)
+            s_list.append(f"**{name}**\n", src)
 
             # Add the autosummary description for this demo, including a link to the
             # full demonstration.  This is the definition of the item.
-            summary_string += "  :any:`Go to demo ↱ <{real_name}>`\n".format(
-                real_name=real_name
-            )
+            summary_string += f"  :any:`Go to demo ↱ <{real_name}>`\n"
             s_list.append("    " + summary_string, src)
 
         # Now that we have a fully populated StringList, let Sphinx handle the dirty
@@ -178,7 +174,7 @@ class ProviderSummary(Autosummary):
             if key.startswith("is_"):
                 # Use the fully qualified name here so Sphinx finds it.
                 # (avoid need to use .. currentmodule:: in docstring)
-                all_providers.append("ci_exec.provider.Provider.{key}".format(key=key))
+                all_providers.append(f"ci_exec.provider.Provider.{key}")
 
         return super().get_items(all_providers)
 
@@ -202,7 +198,7 @@ class CoreSummary(Autosummary):
         all_items = []
         for item in ci_exec.__all__:
             module = getattr(ci_exec, item).__module__
-            full_item = "{module}.{item}".format(module=module, item=item)
+            full_item = f"{module}.{item}"
             all_items.append(full_item)
 
         return super().get_items(all_items)

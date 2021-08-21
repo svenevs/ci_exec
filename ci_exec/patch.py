@@ -88,7 +88,7 @@ def filter_file(path: Union[Path, str], pattern: str,
     if isinstance(path, str):
         path = Path(path)
     if not path.is_file():
-        fail("Cannot filter '{path}', no such file!".format(path=str(path)))
+        fail(f"Cannot filter '{str(path)}', no such file!")
     if backup_extension == "":
         fail("filter_file: 'backup_extension' may not be the empty string.")
     try:
@@ -129,11 +129,11 @@ def filter_file(path: Union[Path, str], pattern: str,
 
             # Enforce that the files are different ;)
             if orig_contents == new_contents:
-                fail("filter_file: no changes made to '{path}'".format(path=str(path)))
+                fail(f"filter_file: no changes made to '{str(path)}'")
 
         return backup
     except Exception as e:
-        fail("Unable to filter '{path}': {e}".format(path=str(path), e=e))
+        fail(f"Unable to filter '{str(path)}': {e}")
 
 
 def unified_diff(from_path: Union[Path, str], to_path: Union[Path, str], n: int = 3,
@@ -183,13 +183,9 @@ def unified_diff(from_path: Union[Path, str], to_path: Union[Path, str], n: int 
     if isinstance(to_path, str):
         to_path = Path(to_path)
     if not from_path.is_file():
-        fail("unified_diff: from_path '{from_path}' does not exist!".format(
-            from_path=str(from_path)
-        ))
+        fail(f"unified_diff: from_path '{str(from_path)}' does not exist!")
     if not to_path.is_file():
-        fail("unified_diff: to_path '{to_path}' does not exist!".format(
-            to_path=str(to_path)
-        ))
+        fail(f"unified_diff: to_path '{str(to_path)}' does not exist!")
 
     try:
         # difflib wants list of strings, read them in
@@ -222,6 +218,5 @@ def unified_diff(from_path: Union[Path, str], to_path: Union[Path, str], n: int 
 
         return diff_text
     except Exception as e:
-        fail("unified_diff: unable to diff '{from_path}' with '{to_path}': {e}".format(
-            from_path=str(from_path), to_path=str(to_path), e=e
-        ))
+        fail(f"unified_diff: unable to diff '{str(from_path)}' with "
+             f"'{str(to_path)}': {e}")

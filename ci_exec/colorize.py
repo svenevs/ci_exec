@@ -147,16 +147,14 @@ def colorize(message: str, *, color: str, style: str = Styles.Regular) -> str:
     str
         The original message with the specified color escape sequence.
     """
-    prefix = "{Escape}{color}".format(Escape=Ansi.Escape, color=color)
+    prefix = f"{Ansi.Escape}{color}"
     # Regular: `m` goes right after color without `;`
     if style != "":
         if not style.startswith(";"):
             prefix += ";" + style
     prefix += "m"
 
-    return "{prefix}{message}{Clear}".format(
-        prefix=prefix, message=message, Clear=Ansi.Clear
-    )
+    return f"{prefix}{message}{Ansi.Clear}"
 
 
 def dump_predefined_color_styles():
@@ -170,11 +168,7 @@ def dump_predefined_color_styles():
                 continue
             style = getattr(Styles, s_key)
 
-            print(colorize(
-                "color={c_key}, style={s_key}".format(c_key=c_key, s_key=s_key),
-                color=color,
-                style=style
-            ))
+            print(colorize(f"color={c_key}, style={s_key}", color=color, style=style))
 
 
 def log_stage(stage: str, *, fill_char: str = "=", pad: str = " ",
@@ -292,16 +286,12 @@ def log_stage(stage: str, *, fill_char: str = "=", pad: str = " ",
         else:
             fill = fill_char * ((fill_width - 1) // 2)
             # Add an extra fill_char on suffix to fill screen.
-            suffix_prefix = "{suffix_prefix}{fill_char}".format(
-                suffix_prefix=suffix_prefix, fill_char=fill_char
-            )
+            suffix_prefix = f"{suffix_prefix}{fill_char}"
 
         # Create the full width message, colorize, and print.
-        prefix = "{fill}{prefix_suffix}".format(fill=fill, prefix_suffix=prefix_suffix)
-        suffix = "{suffix_prefix}{fill}".format(fill=fill, suffix_prefix=suffix_prefix)
-        message = "{prefix}{stage}{suffix}".format(
-            prefix=prefix, stage=stage, suffix=suffix
-        )
+        prefix = f"{fill}{prefix_suffix}"
+        suffix = f"{suffix_prefix}{fill}"
+        message = f"{prefix}{stage}{suffix}"
     if color:
         message = colorize(message, color=color, style=style)
     print(message, **kwargs)

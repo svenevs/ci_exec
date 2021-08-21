@@ -46,10 +46,10 @@ enables this via the ``input`` parameter.  Consider the following toy script tha
 expecting two pieces of user input at different stages::
 
     name = input("What is your name? ")
-    print("Hi {name}, nice to meet you.".format(name=name))
+    print(f"Hi {name}, nice to meet you.")
 
     age = input("How old are you? ")
-    print("Wow!  {age} is such a great age :)".format(age=age))
+    print(f"Wow!  {age} is such a great age :)")
 
 Then you could call it using ``ci_exec`` like this::
 

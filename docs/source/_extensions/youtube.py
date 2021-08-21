@@ -60,9 +60,34 @@ def visit_youtube_node(self, node):
     height = node["height"]
 
     # Generate the html text to add to the body.
-    url = "https://www.youtube.com/embed/{dest}".format(dest=dest)
-    backup = "https://youtu.be/{dest}".format(dest=dest)
-    self.body.append(textwrap.dedent('''
+    url = f"https://www.youtube.com/embed/{dest}"
+    backup = f"https://youtu.be/{dest}"
+    div_style = "; ".join([
+        "position: relative",
+        "height: 0",
+        f"padding-bottom: {(float(height) / float(width)) * 100.0}%",
+        "padding-top: 25px"
+    ])
+    iframe_style="; ".join([
+        "position: absolute",
+        "top: 0",
+        "left: 0",
+        "width: 100%",
+        "height: 100%"
+    ]),
+    allow = "; ".join([
+        "accelerometer",
+        "autoplay",
+        "encrypted-media",
+        "gyroscope",
+        "picture-in-picture"
+    ])
+    defaults=" ".join([
+        'frameborder="0"',
+        f'allow="{allow}"',
+        'allowfullscreen'
+    ])
+    self.body.append(textwrap.dedent(f'''
         <div style="{div_style}">
           <iframe width="{width}" height="{height}" src="{url}" style="{iframe_style}" {defaults}>
             Your web browser does not appear to support iframe tags.  This video is
@@ -70,32 +95,7 @@ def visit_youtube_node(self, node):
           </iframe>
         </div>
         <br />
-    ''').format(  # noqa: E501
-        div_style="; ".join([
-            "position: relative",
-            "height: 0",
-            "padding-bottom: {aspect}%".format(
-                aspect=(float(height) / float(width)) * 100.0
-            ),
-            "padding-top: 25px"
-        ]),
-        iframe_style="; ".join([
-            "position: absolute",
-            "top: 0",
-            "left: 0",
-            "width: 100%",
-            "height: 100%"
-        ]),
-        width=width,
-        height=height,
-        url=url,
-        defaults=(
-            'frameborder="0" '
-            'allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" '  # noqa: E501
-            'allowfullscreen'
-        ),
-        backup=backup
-    ))
+    '''))
 
 
 def depart_youtube_node(self, node):

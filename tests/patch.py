@@ -55,7 +55,7 @@ def test_filter_file(capsys):
     red_x = colorize("[X] ", color=Colors.Red, style=Styles.Bold)
     captured = capsys.readouterr()
     assert captured.out == ""
-    err = "{red_x}Cannot filter 'i_dont_exist', no such file!".format(red_x=red_x)
+    err = f"{red_x}Cannot filter 'i_dont_exist', no such file!"
     assert captured.err.strip() == err
 
     # Backup extension must not be empty string.
@@ -63,9 +63,7 @@ def test_filter_file(capsys):
         filter_file("tox.ini", "boom", "blam", backup_extension="")
     captured = capsys.readouterr()
     assert captured.out == ""
-    err = "{red_x}filter_file: 'backup_extension' may not be the empty string.".format(
-        red_x=red_x
-    )
+    err = f"{red_x}filter_file: 'backup_extension' may not be the empty string."
     assert captured.err.strip() == err
 
     def read_both(cml: Path, bku: Path) -> Tuple[str, str]:
@@ -92,7 +90,7 @@ def test_filter_file(capsys):
             filter_file(cmake_lists_txt, "export", lambda x: 11, line_based=line_based)
         captured = capsys.readouterr()
         assert captured.out == ""
-        assert captured.err.startswith("{red_x}Unable to filter".format(red_x=red_x))
+        assert captured.err.startswith(f"{red_x}Unable to filter")
         assert "expected str instance, int found" in captured.err
 
         # No filtering with demand_different=False should not error.

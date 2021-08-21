@@ -68,14 +68,10 @@ def test_colorize(color: str, style: str):
     colored = colorize(message, color=color, style=style)
 
     if style == Styles.Regular:
-        assert colored.startswith("{Escape}{color}m".format(
-            Escape=Ansi.Escape, color=color
-        ))
+        assert colored.startswith(f"{Ansi.Escape}{color}m")
     else:
-        assert colored.startswith("{Escape}{color};{style}m".format(
-            Escape=Ansi.Escape, color=color, style=style
-        ))
-    assert colored.endswith("{Clear}".format(Clear=Ansi.Clear))
+        assert colored.startswith(f"{Ansi.Escape}{color};{style}m")
+    assert colored.endswith(f"{Ansi.Clear}")
     assert message in colored
 
 
@@ -110,9 +106,7 @@ def test_dump_predefined_color_styles(capsys):
         color = getattr(Colors, color_name)
         for style_name, style in zip(style_names, styles_seen):
             expected = colorize(
-                "color={color_name}, style={style_name}".format(
-                    color_name=color_name, style_name=style_name
-                ),
+                f"color={color_name}, style={style_name}",
                 color=color,
                 style=style
             )
@@ -264,7 +258,7 @@ def test_log_stage(capsys, stage: str, fill_char_: Optional[str], pad_: Optional
     # Test with the default `print` command.
     log_stage(stage, **log_stage_kwargs)
     captured = capsys.readouterr()
-    orig_out = "{out}".format(out=captured.out)  # stash for comparing with next test
+    orig_out = f"{captured.out}"  # stash for comparing with next test
     assert captured.err == ""
     verify_all(captured.out)
 

@@ -51,7 +51,7 @@ try:
     if not long:
         raise RuntimeError("Internal error: could not extract long description.")
 except Exception as e:
-    raise RuntimeError("CRITICAL: {e}".format(e=e))
+    raise RuntimeError(f"CRITICAL: {e}")
 
 brief_description = brief.rstrip()
 long_description = long.rstrip()
