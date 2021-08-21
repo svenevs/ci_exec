@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools >= 40.6.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+################################################################################
+[tool.coverage.run]
+data_file = ".coverage"
+include = [
+    "ci_exec/**",
+    "tests/**",
+    "demos/**"]
+
+################################################################################
+[[tool.mypy.overrides]]
+module = [
+    "pytest",
+    "pygments",
+    "setuptools",
+    # NOTE: see docs/requirements.txt, this will not be needed in future.
+    "sphinx.ext.autodoc"]
+
+################################################################################
+[tool.pytest.ini_options]
+cache_dir = "tests/.cache"
+norecursedirs = [
+    ".git/",
+    "docs/",
+    "ci_exec/"]
+python_files = ["tests/**.py"]
