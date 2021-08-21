@@ -68,7 +68,7 @@ def visit_youtube_node(self, node):
         f"padding-bottom: {(float(height) / float(width)) * 100.0}%",
         "padding-top: 25px"
     ])
-    iframe_style="; ".join([
+    iframe_style = "; ".join([
         "position: absolute",
         "top: 0",
         "left: 0",
@@ -82,7 +82,7 @@ def visit_youtube_node(self, node):
         "gyroscope",
         "picture-in-picture"
     ])
-    defaults=" ".join([
+    defaults = " ".join([
         'frameborder="0"',
         f'allow="{allow}"',
         'allowfullscreen'
@@ -95,7 +95,7 @@ def visit_youtube_node(self, node):
           </iframe>
         </div>
         <br />
-    '''))
+    '''))  # noqa: E501
 
 
 def depart_youtube_node(self, node):
