@@ -261,6 +261,13 @@ class CMakeParser(argparse.ArgumentParser):
     __ https://cmake.org/cmake/help/latest/generator/Ninja.html
     """
 
+    ninja_multi_generator = {"Ninja Multi-Config"}
+    """
+    The `Ninja Multi-Config Generator`__.
+
+    __ https://cmake.org/cmake/help/latest/generator/Ninja%20Multi-Config.html
+    """
+
     visual_studio_generators = {
         "Visual Studio 9 2008",
         "Visual Studio 10 2010",
@@ -268,7 +275,8 @@ class CMakeParser(argparse.ArgumentParser):
         "Visual Studio 12 2013",
         "Visual Studio 14 2015",
         "Visual Studio 15 2017",
-        "Visual Studio 16 2019"
+        "Visual Studio 16 2019",
+        "Visual Studio 17 2022"
     }
     """
     The `Visual Studio Generators`__.
@@ -286,7 +294,8 @@ class CMakeParser(argparse.ArgumentParser):
     @classmethod
     def is_multi_config_generator(cls, generator: str) -> bool:
         """Whether or not string ``generator`` is a multi-config generator."""
-        return generator in (cls.visual_studio_generators | cls.other_generators)
+        return generator in (cls.visual_studio_generators | cls.other_generators |
+                             cls.ninja_multi_generator)
 
     @classmethod
     def is_single_config_generator(cls, generator: str) -> bool:
@@ -310,7 +319,8 @@ class CMakeParser(argparse.ArgumentParser):
             help="Generator to use (CMake -G flag).",
             choices=sorted(
                 self.makefile_generators | self.ninja_generator |
-                self.visual_studio_generators | self.other_generators
+                self.ninja_multi_generator | self.visual_studio_generators |
+                self.other_generators
             )
         )
 
