@@ -29,11 +29,6 @@ sys.path.insert(0, root)
 sys.path.insert(1, demos)
 import ci_exec  # noqa: E402, I100
 
-
-sys.path.insert(0, os.path.join(this_file_dir, "_extensions"))
-from youtube import Youtube, YoutubeDirective, depart_youtube_node, visit_youtube_node  # noqa: E402, E501
-
-
 # -- Project information ---------------------------------------------------------------
 year = datetime.datetime.now().year
 project = "ci_exec"
@@ -219,6 +214,3 @@ def setup(app):  # noqa: D103
     app.add_directive("dlistsummary", DefinitionListSummary)
     app.add_directive("availableproviders", ProviderSummary)
     app.add_directive("coresummary", CoreSummary)
-
-    app.add_node(Youtube, html=(visit_youtube_node, depart_youtube_node))
-    app.add_directive("youtube", YoutubeDirective)

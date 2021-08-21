@@ -67,12 +67,11 @@ all.  The main features a user should be aware of:
 None of these features are altogether that special, but it must be stated clearly and
 plainly: this library is designed for users who already know Python.
 
-Put differently: if you don't know why writing script-like Python is useful for CI,
-while still having access to a full-fledged programming language, this package likely
-has no use for you.  In particular, C++ users are encouraged to look at
-`conan <https://conan.io/>`_ as an alternative.  ``ci_exec`` has zero intention of
-becoming a package manager, and was written to help manage projects that are not well
-suited to conan for various reasons.
+.. note::
+
+    C++ users are encouraged to look at `conan <https://conan.io/>`_ as an alternative.
+    ``ci_exec`` has zero intention of becoming a package manager, and was written to
+    help manage projects that are not well suited to conan for various reasons.
 
 Full Documentation
 ----------------------------------------------------------------------------------------
