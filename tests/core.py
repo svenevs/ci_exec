@@ -52,7 +52,7 @@ def test_fail(capsys, why: str, exit_code: int, no_prefix: bool):
         prefix = ""
     else:
         prefix = colorize("[X] ", color=Colors.Red, style=Styles.Bold)
-    expected_error_message = "{prefix}{why}\n".format(prefix=prefix, why=why)
+    expected_error_message = f"{prefix}{why}\n"
     captured = capsys.readouterr()
     assert captured.out == ""
     assert captured.err == expected_error_message
@@ -72,16 +72,16 @@ def test_executable_construction_failures():
     non_file_msg = str(non_file_excinfo.value)
     assert non_file_msg.startswith("The path '")
     not_here = str(Path(".").resolve() / "this_file_is_not_here")
-    assert non_file_msg.endswith("{not_here}' is not a file.".format(not_here=not_here))
+    assert non_file_msg.endswith(f"{not_here}' is not a file.")
 
     # It must be executable.
     tox_ini = str(here / "tox.ini")
     with pytest.raises(ValueError) as non_executable_excinfo:
         Executable(tox_ini)
     if platform.system() == "Windows":
-        not_exe = "Extension of '{tox_ini}' is not in PATHEXT.".format(tox_ini=tox_ini)
+        not_exe = f"Extension of '{tox_ini}' is not in PATHEXT."
     else:
-        not_exe = "The path '{tox_ini}' is not executable.".format(tox_ini=tox_ini)
+        not_exe = f"The path '{tox_ini}' is not executable."
     assert str(non_executable_excinfo.value) == not_exe
 
 
@@ -115,10 +115,7 @@ def test_executable_logging(capsys):
         print(proc.stdout.decode("utf-8"), end="")
         if exe.log_calls:
             popen_args = (exe.exe_path, *args)
-            message = "{log_prefix}{cmd_line}".format(
-                log_prefix=exe.log_prefix,
-                cmd_line=" ".join(popen_args)
-            )
+            message = f"{exe.log_prefix}{' '.join(popen_args)}"
             if exe.log_color:
                 message = colorize(message, color=exe.log_color, style=exe.log_style)
             return message
@@ -397,9 +394,7 @@ def test_which(capsys):
     captured = capsys.readouterr()
     assert captured.out == ""
     prefix = colorize("[X] ", color=Colors.Red, style=Styles.Bold)
-    expected_error_message = "{prefix}Could not find '{no_cmd}' in $PATH.\n".format(
-        prefix=prefix, no_cmd=no_cmd
-    )
+    expected_error_message = f"{prefix}Could not find '{no_cmd}' in $PATH.\n"
     assert captured.err == expected_error_message
 
     # Test manual $PATH override / make sure same python is found.
@@ -410,12 +405,12 @@ def test_which(capsys):
     assert python.exe_path == str(actual_python)
 
     # Throwing in the __str__ test here because it doesn't deserve its own test method.
-    assert str(python) == "Executable('{py}')".format(py=str(actual_python))
+    assert str(python) == f"Executable('{str(actual_python)}')"
 
     proc = python("-c", "import sys; print(sys.version_info)", stdout=PIPE, stderr=PIPE)
     assert proc.returncode == 0
     assert proc.stderr == b""
-    assert proc.stdout.decode("utf-8").strip() == "{v}".format(v=sys.version_info)
+    assert proc.stdout.decode("utf-8").strip() == f"{sys.version_info}"
 
     # :)
     with pytest.raises(TypeError) as te_excinfo:

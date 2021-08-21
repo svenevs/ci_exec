@@ -520,20 +520,15 @@ class CMakeParser(argparse.ArgumentParser):
         # Setup BUILD_SHARED_LIBS if either --shared or --static requested.
         if (hasattr(parsed_args, "shared") and parsed_args.shared) or \
                 (hasattr(parsed_args, "static") and parsed_args.static):
-            cmake_configure_args.append("-DBUILD_SHARED_LIBS={0}".format(
-                "ON" if parsed_args.shared else "OFF"
-            ))
+            cmake_configure_args.append(
+                f"-DBUILD_SHARED_LIBS={'ON' if parsed_args.shared else 'OFF'}")
 
         # Setup the default compilers for single config generators.
         if self.is_single_config_generator(parsed_args.generator):
             if hasattr(parsed_args, "cc") and parsed_args.cc:
-                cmake_configure_args.append(
-                    "-DCMAKE_C_COMPILER={0}".format(parsed_args.cc)
-                )
+                cmake_configure_args.append(f"-DCMAKE_C_COMPILER={parsed_args.cc}")
             if hasattr(parsed_args, "cxx") and parsed_args.cxx:
-                cmake_configure_args.append(
-                    "-DCMAKE_CXX_COMPILER={0}".format(parsed_args.cxx)
-                )
+                cmake_configure_args.append(f"-DCMAKE_CXX_COMPILER={parsed_args.cxx}")
 
         # CMAKE_BUILD_TYPE at configure time for single config generators, and
         # --config build_type build args for multi config generators.
@@ -542,8 +537,7 @@ class CMakeParser(argparse.ArgumentParser):
                 cmake_build_args.extend(["--config", parsed_args.build_type])
             else:
                 cmake_configure_args.append(
-                    "-DCMAKE_BUILD_TYPE={0}".format(parsed_args.build_type)
-                )
+                    f"-DCMAKE_BUILD_TYPE={parsed_args.build_type}")
 
         # Add any extra arguments that may be requested after -- sequence.
         if hasattr(parsed_args, "extra_args"):
@@ -626,9 +620,7 @@ class CMakeParser(argparse.ArgumentParser):
                 missing.append(item)
 
         if missing:
-            raise ValueError(
-                "Cannot remove unregistered arg(s): {missing}".format(missing=missing)
-            )
+            raise ValueError(f"Cannot remove unregistered arg(s): {missing}")
 
     def set_argument(self, arg: str, **attrs: Dict[str, Any]):
         """
@@ -690,10 +682,9 @@ class CMakeParser(argparse.ArgumentParser):
         supported_keys = {"default", "choices", "required", "help", "metavar"}
         if not attrs.keys() <= supported_keys:
             disallowed = attrs.keys() - supported_keys
-            raise ValueError("Setting attribute{s} {disallowed} not supported.".format(
-                s=("" if len(disallowed) == 1 else "s"),
-                disallowed=disallowed
-            ))
+            raise ValueError(
+                f"Setting attribute{'' if len(disallowed) == 1 else 's'} "
+                f"{disallowed} not supported.")
 
         if arg in {"-G", "generator"} and "choices" in attrs:
             raise ValueError(
@@ -704,9 +695,7 @@ class CMakeParser(argparse.ArgumentParser):
 
         # Nothing to set...
         if arg_obj is None:
-            raise ValueError(
-                "Cannot set attrs of '{arg}', argument not found.".format(arg=arg)
-            )
+            raise ValueError(f"Cannot set attrs of '{arg}', argument not found.")
 
         # Set all the attributes to what the user requested.
         for key, val in attrs.items():

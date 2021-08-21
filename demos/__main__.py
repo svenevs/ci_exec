@@ -338,14 +338,12 @@ def main():
 
     parser.add_argument(
         "demo", type=str, metavar="DEMO", choices=available_demos.keys(),
-        help=textwrap.dedent('''
+        help=textwrap.dedent(f'''
             RAW(The demo to run.  Choices:
 
-            {choices}
+            {''.join([f'- {key}' for key in available_demos.keys()])}
             )RAW
-        ''').format(choices="".join([
-            "- {key}".format(key=key)for key in available_demos.keys()
-        ]))
+        ''')
     )
     parser.add_argument(
         "--animated", action="store_true",

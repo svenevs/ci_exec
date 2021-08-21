@@ -21,13 +21,7 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
-from typing import Optional, Union
-
-# NoReturn not available in all 3.5.
-try:
-    from typing import NoReturn
-except ImportError:
-    NoReturn = None  # type: ignore
+from typing import NoReturn, Optional, Union
 
 from .colorize import Colors, Styles, colorize
 
@@ -52,7 +46,7 @@ def fail(why: str, *, exit_code: int = 1, no_prefix: bool = False) -> NoReturn:
         prefix = ""
     else:
         prefix = colorize("[X] ", color=Colors.Red, style=Styles.Bold)
-    sys.stderr.write("{prefix}{why}\n".format(prefix=prefix, why=why))
+    sys.stderr.write(f"{prefix}{why}\n")
     sys.exit(exit_code)
 
 
@@ -152,20 +146,14 @@ class Executable:
                  log_style: str = Styles.Bold):
         p = Path(exe_path)
         if not p.is_file():
-            raise ValueError("The path '{exe_path}' is not a file.".format(
-                exe_path=exe_path
-            ))
+            raise ValueError(f"The path '{exe_path}' is not a file.")
         # NOTE: this check does not really apply to Windows.
         if not os.access(exe_path, os.X_OK):
-            raise ValueError("The path '{exe_path}' is not executable.".format(
-                exe_path=exe_path
-            ))
+            raise ValueError(f"The path '{exe_path}' is not executable.")
         # On Windows, check that this file can be executed directly using PATHEXT.
         if Executable.PATH_EXTENSIONS:
             if p.suffix.lower() not in Executable.PATH_EXTENSIONS:
-                raise ValueError("Extension of '{exe_path}' is not in PATHEXT.".format(
-                    exe_path=exe_path
-                ))
+                raise ValueError(f"Extension of '{exe_path}' is not in PATHEXT.")
 
         # Store paths as absolute paths so that users can change working directory
         # without needing to worry about relative paths.
@@ -243,9 +231,7 @@ class Executable:
         """
         popen_args = (self.exe_path, *args)
         if self.log_calls:
-            message = "{log_prefix}{cmd}".format(
-                log_prefix=self.log_prefix, cmd=" ".join(popen_args)
-            )
+            message = f"{self.log_prefix}{' '.join(popen_args)}"
             if self.log_color:
                 message = colorize(message, color=self.log_color, style=self.log_style)
             print(message)
@@ -261,11 +247,10 @@ class Executable:
             # actually instantiates a subprocess.Popen object.
             if isinstance(e, TypeError):
                 err_msg = (
-                    "Executable.__call__: invalid kwarg(s) for subprocess.run: "
-                    "{e}".format(e=e)
+                    f"Executable.__call__: invalid kwarg(s) for subprocess.run: {e}"
                 )
             else:
-                err_msg = "{e}".format(e=e)
+                err_msg = f"{e}"
             # Try and mirror the exit code if possible, subprocess.run will raise an
             # exception when check=True, but this may not necessarily be why this code
             # is executing.
@@ -281,7 +266,7 @@ class Executable:
             fail(err_msg, exit_code=exit_code)
 
     def __str__(self):  # noqa: D105
-        return "Executable('{exe_path}')".format(exe_path=self.exe_path)
+        return f"Executable('{self.exe_path}')"
 
 
 def mkdir_p(path: Union[Path, str], mode: int = 0o777, parents: bool = True,
@@ -319,7 +304,7 @@ def mkdir_p(path: Union[Path, str], mode: int = 0o777, parents: bool = True,
     try:
         path.mkdir(mode=mode, parents=parents, exist_ok=exist_ok)
     except Exception as e:
-        fail("Unable to mkdir_p '{path}': {e}".format(path=str(path), e=e))
+        fail(f"Unable to mkdir_p '{str(path)}': {e}")
 
 
 def rm_rf(path: Union[Path, str], ignore_errors: bool = False, onerror=None):
@@ -356,7 +341,7 @@ def rm_rf(path: Union[Path, str], ignore_errors: bool = False, onerror=None):
             return
         shutil.rmtree(str(path), ignore_errors=ignore_errors, onerror=onerror)
     except Exception as e:
-        fail("Unable to remove '{path}': {e}".format(path=str(path), e=e))
+        fail(f"Unable to remove '{str(path)}': {e}")
 
 
 def which(cmd: str, *, mode: int = (os.F_OK | os.X_OK), path: Optional[str] = None,
@@ -409,5 +394,5 @@ def which(cmd: str, *, mode: int = (os.F_OK | os.X_OK), path: Optional[str] = No
     """
     exe_path = shutil.which(cmd, mode=mode, path=path)
     if exe_path is None:
-        fail("Could not find '{cmd}' in $PATH.".format(cmd=cmd))
+        fail(f"Could not find '{cmd}' in $PATH.")
     return Executable(exe_path, **kwargs)

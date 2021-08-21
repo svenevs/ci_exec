@@ -37,7 +37,7 @@ ci_exec
 .. begin_brief_desc
 
 A wrapper package designed for running continuous integration (CI) build steps using
-Python 3.5+.
+Python 3.6+.
 
 .. end_brief_desc
 

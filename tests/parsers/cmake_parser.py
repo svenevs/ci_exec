@@ -78,8 +78,8 @@ def test_cmake_parser_defaults():
 
     expected_configure_args = {
         "-G", "Ninja",
-        "-DCMAKE_C_COMPILER={cc}".format(cc=cc),
-        "-DCMAKE_CXX_COMPILER={cxx}".format(cxx=cxx),
+        f"-DCMAKE_C_COMPILER={cc}",
+        f"-DCMAKE_CXX_COMPILER={cxx}",
         "-DCMAKE_BUILD_TYPE=Release"
     }
     assert set(args.cmake_configure_args) == expected_configure_args
@@ -304,9 +304,7 @@ def test_cmake_parser_set_argument():
         with pytest.raises(ValueError) as ve_excinfo:
             parser.set_argument("shared", **kwargs)
         why = str(ve_excinfo.value)
-        assert why.startswith(
-            "Setting attribute{s}".format(s="" if len(kwargs) == 1 else "s")
-        )
+        assert why.startswith(f"Setting attribute{'' if len(kwargs) == 1 else 's'}")
         # NOTE: str.format(set) used, can't assume order so just check `in`.
         for key in kwargs:
             assert key in why
@@ -354,8 +352,8 @@ def test_cmake_parser_extra_args():
     cc, cxx = default_cc_cxx()
     base_configure_args = [
         "-G", "Ninja",
-        "-DCMAKE_C_COMPILER={cc}".format(cc=cc),
-        "-DCMAKE_CXX_COMPILER={cxx}".format(cxx=cxx),
+        f"-DCMAKE_C_COMPILER={cc}",
+        f"-DCMAKE_CXX_COMPILER={cxx}",
         "-DCMAKE_BUILD_TYPE=Release"
     ]
 

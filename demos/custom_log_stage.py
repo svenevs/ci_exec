@@ -123,9 +123,7 @@ def main():
     do_work(3)
 
     # Let the reader know it's all gonna be ok.
-    print("{prefix} All work completed successfully {suffix}".format(
-        prefix=bold_green("[+]"), suffix=bold_green(":)")
-    ))
+    print(f"{bold_green('[+]')} All work completed successfully {bold_green(':)')}")
 
 
 if __name__ == "__main__":

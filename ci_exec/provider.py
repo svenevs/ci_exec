@@ -16,13 +16,7 @@
 """Mechanisms to detect a given CI provider."""
 
 import os
-from typing import Callable, List
-
-# TYPE_CHECKING not available in all 3.5.
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
+from typing import Callable, List, TYPE_CHECKING
 
 # mypy has trouble inferring @provider as @staticmethod right now.  The solution will
 # not likely exist for a while, there are some deeper problems with typing and
