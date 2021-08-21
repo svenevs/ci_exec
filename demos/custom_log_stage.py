@@ -2,7 +2,13 @@
 """
 Simple demo for how to modify the ``ci_exec`` defaults to suit user preferences.
 
-.. youtube:: zMkv9ndgjVE
+Run this demo by cloning the repository:
+
+.. code-block:: console
+
+    $ git clone https://github.com/svenevs/ci_exec.git
+    $ cd ci_exec
+    $ python -m demos custom_log_stage
 
 By default :func:`~ci_exec.colorize.log_stage` will log in bold green, using ``"="`` as
 a separator.  This makes stages stick out / easy to spot during CI builds, but users may
@@ -90,7 +96,11 @@ def do_work(n: int, width: int = shutil.get_terminal_size().columns):
     diff = width - len(all_work)
     if diff > 0:
         all_work += work[0:diff]
-    parts = all_work.split(work)
+
+    if diff == 0:
+        parts = [False for _ in range(num_work)]
+    else:
+        parts = all_work.split(work)
 
     # Give the illusion of do_work taking more time...
     for i in range(n):
