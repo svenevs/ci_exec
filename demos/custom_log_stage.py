@@ -98,7 +98,7 @@ def do_work(n: int, width: int = shutil.get_terminal_size().columns):
         all_work += work[0:diff]
 
     if diff == 0:
-        parts = [False for _ in range(num_work)]
+        parts = ['' for _ in range(num_work)]
     else:
         parts = all_work.split(work)
 
