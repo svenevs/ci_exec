@@ -53,7 +53,8 @@ def test_cmake_parser_is_x_config_generator():
         assert CMakeParser.is_single_config_generator(g)
         assert not CMakeParser.is_multi_config_generator(g)
 
-    for g in chain(CMakeParser.visual_studio_generators, CMakeParser.other_generators):
+    for g in chain(CMakeParser.visual_studio_generators, CMakeParser.other_generators,
+                   CMakeParser.ninja_multi_generator):
         assert not CMakeParser.is_single_config_generator(g)
         assert CMakeParser.is_multi_config_generator(g)
 
@@ -489,6 +490,12 @@ def test_cmake_parser_single_vs_multi_configure_build_args():
     # Multi-config generator: it is a build argument.
     args = parser.parse_args([
         "-G", "Visual Studio 16 2019", "-A", "x64", "--build-type", "Debug"
+    ])
+    assert "-DCMAKE_BUILD_TYPE=Debug" not in args.cmake_configure_args
+    assert args.cmake_build_args == ["--config", "Debug"]
+
+    args = parser.parse_args([
+        "-G", "Ninja Multi-Config", "--build-type", "Debug"
     ])
     assert "-DCMAKE_BUILD_TYPE=Debug" not in args.cmake_configure_args
     assert args.cmake_build_args == ["--config", "Debug"]
