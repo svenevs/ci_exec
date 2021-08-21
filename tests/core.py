@@ -115,7 +115,7 @@ def test_executable_logging(capsys):
         print(proc.stdout.decode("utf-8"), end="")
         if exe.log_calls:
             popen_args = (exe.exe_path, *args)
-            message = f"{log_prefix}{' '.join(popen_args)}"
+            message = f"{exe.log_prefix}{' '.join(popen_args)}"
             if exe.log_color:
                 message = colorize(message, color=exe.log_color, style=exe.log_style)
             return message
