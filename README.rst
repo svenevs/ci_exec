@@ -34,14 +34,8 @@ ci_exec
 
 .. end_badges
 
-.. begin_brief_desc
-
 A wrapper package designed for running continuous integration (CI) build steps using
 Python 3.6+.
-
-.. end_brief_desc
-
-.. begin_long_desc
 
 Managing cross platform build scripts for CI can become tedious at times when you need
 to e.g., maintain two nearly identical scripts ``install_deps.sh`` and
@@ -77,19 +71,8 @@ specifically for running build steps on CI providers.  It is
             cmake("..", "-G", "Ninja", "-DCMAKE_BUILD_TYPE=Release")
             ninja("-j", "2", "test")
 
-.. end_long_desc
-
-.. begin_final_desc
-
-Please refer to the `full documentation <https://ci-exec.readthedocs.io/en/latest/>`_
-for more information.
-
-.. end_final_desc
-
 Installation
 ========================================================================================
-
-.. begin_install
 
 ``ci_exec`` is `available on PyPI <https://pypi.org/project/ci-exec/>`_.  It can be
 installed using your python package manager of choice:
@@ -108,10 +91,7 @@ There is also a ``setup.py`` here, so you can also install it from source:
 
     $ pip install git+https://github.com/svenevs/ci_exec.git@master
 
-.. end_install
-
 License
 ========================================================================================
 
 This software is licensed under the Apache 2.0 license.
-
