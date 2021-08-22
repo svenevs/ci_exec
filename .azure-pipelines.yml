@@ -151,7 +151,7 @@ jobs:
         displayName: Use Python 3.9
       - script: |
           pip install -U pip
-          pip install coverage[toml] codecov
+          pip install coverage codecov toml
         displayName: Install Dependencies
       - script: |
           coverage run ./tests/full_provider_test.py azure_pipelines
