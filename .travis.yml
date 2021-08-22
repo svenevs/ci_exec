@@ -29,6 +29,18 @@ matrix:
         - tox -e lint
       after_success:  # don't do uploading, no coverage data needed
         - echo
+    - os: linux
+      language: python
+      python: 3.9
+      env: TEST=provider_check
+      script:
+        - pip install -U pip
+        - pip install coverage codecov
+        - coverage run ./tests/full_provider_test.py travis
+        - coverage xml -o coverage.xml
+        - codecov --required -X gcov -f coverage.xml --name "[Travis] Full Provider Check"
+      after_success:  # we already uploaded, under a different name than below pattern
+        - echo
 
 install:
   - pip install -U tox codecov
