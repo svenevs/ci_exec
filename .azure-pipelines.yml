@@ -156,5 +156,5 @@ jobs:
       - script: |
           coverage run ./tests/full_provider_test.py azure_pipelines
           coverage xml -o coverage.xml
-          codecov --required -X gcov -f coverage.xml --name "[AzP] Full Provider Check"
+          codecov --required -X gcov -f coverage.xml --name "[AzP] Full Provider Check" -t $(CODECOV_TOKEN)
         displayName: Verify Azure Pipelines is Detected
