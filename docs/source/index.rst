@@ -2,26 +2,13 @@ ci_exec
 ========================================================================================
 
 .. contents::
-   :local:
    :backlinks: none
 
 About
 ----------------------------------------------------------------------------------------
 
 .. include:: ../../README.rst
-   :start-after: begin_brief_desc
-   :end-before: end_brief_desc
-
-.. include:: ../../README.rst
-   :start-after: begin_long_desc
-   :end-before: end_long_desc
-
-Installation
-----------------------------------------------------------------------------------------
-
-.. include:: ../../README.rst
-   :start-after: begin_install
-   :end-before: end_install
+   :start-after: end_badges
 
 Intended Audience
 ----------------------------------------------------------------------------------------

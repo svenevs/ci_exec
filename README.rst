@@ -71,9 +71,6 @@ specifically for running build steps on CI providers.  It is
             cmake("..", "-G", "Ninja", "-DCMAKE_BUILD_TYPE=Release")
             ninja("-j", "2", "test")
 
-Please refer to the `full documentation <https://ci-exec.readthedocs.io/en/latest/>`_
-for more information.
-
 Installation
 ========================================================================================
 
