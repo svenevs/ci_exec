@@ -35,7 +35,7 @@ matrix:
       env: TEST=provider_check
       script:
         - pip install -U pip
-        - pip install coverage codecov
+        - pip install coverage[toml] codecov
         - coverage run ./tests/full_provider_test.py travis
         - coverage xml -o coverage.xml
         - codecov --required -X gcov -f coverage.xml --name "[Travis] Full Provider Check"
