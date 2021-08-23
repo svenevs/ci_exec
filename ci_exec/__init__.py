@@ -29,7 +29,7 @@ from .patch import filter_file, unified_diff
 from .provider import Provider
 from .utils import cd, merge_kwargs, set_env, unset_env
 
-__version__ = "0.1.2"
+__version__ = "0.1.3.dev"
 __all__ = [
     # Core imports from ci_exec.colorize module.
     "Ansi", "Colors", "Styles", "colorize", "log_stage",
